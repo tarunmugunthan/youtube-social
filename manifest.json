@@ -23,6 +23,10 @@
    ],
 
    "permissions": [
-       "tabs"
+       "tabs", "webNavigation", "scripting", "activeTab"
+   ],
+
+   "host_permissions": [
+       "<all_urls>"
    ]
 }

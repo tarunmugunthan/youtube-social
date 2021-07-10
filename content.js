@@ -1,14 +1,14 @@
 console.log("extension is working");
 // let list;
 
-function display(){
+function display(list){
 
     let videos = document.createElement('div');
     videos.className = "videos";
     let videoSection = document.createElement('div');
     videoSection.className = "videoSection";
 
-    for(var i = 0; i < 12; i++){
+    for(var i = 0; i < list.length; i++){
 
         let videoContainer = document.createElement('article');
         videoContainer.className = "videoContainer";
@@ -31,8 +31,8 @@ function display(){
         let videoTitle = document.createElement('a');
         videoTitle.href = "#"
         videoTitle.className = "videoTitle";
-        videoTitle.textContent = "Video Title";
-        // videoTitle.textContent = list[i];
+        // videoTitle.textContent = "Video Title";
+        videoTitle.textContent = list[i];
         let channelName = document.createElement('a');
         channelName.href = "#"
         channelName.className = "channelName";
@@ -81,10 +81,10 @@ function display(){
 
 }
 
-
+// display();
 chrome.runtime.sendMessage({greeting: "hello"}, 
     function(response){
-        display();
+        display(response.farewell);
         console.log(response.farewell);
         // setInterval(function(){console.log(response.farewell)}, 2000);
 })
