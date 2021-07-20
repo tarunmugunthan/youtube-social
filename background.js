@@ -7,41 +7,45 @@ setInterval(function(){ console.log("Hello"); }, 1000);
 //     }
 // )
 
-// let current_url = " ";
+// importScripts('jquery.js')
 
-// chrome.tabs.onUpdated.addListener(function(number, object, tab) {
-//         // console.log(number);
-//         // console.log(object);
-//         console.log(tab.url);
-//         // console.log("tab hi 2");
+let current_url = " ";
+let loadCount = 0;
 
-//         if(tab.url.indexOf("https://www.youtube.com/") !== -1){
-//             console.log("ON YOUTUBE");
-//             if(tab.url !== current_url){
-//                 current_url = tab.url;
-//                 console.log("url has changed");
-//                 if(tab.url == "https://www.youtube.com/"){
-//                     console.log("executing script")
-//                     // chrome.scripting.executeScript( { target: {tabId: tab.id}, files: ['content.js']} )
-//                 }
-//             }
-//         } else{
-//             console.log("NOT ON YOUTUBE");
-//         }
-//     }
-// )
+chrome.tabs.onUpdated.addListener(function(number, object, tab) {
+        // console.log(number);
+        // console.log(object);
+        console.log(tab.url);
+        // console.log("tab hi 2");
 
-// chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
-//     chrome.tabs.query(
-//         { currentWindow: true, active: true },
-//         function (tabArray) { 
-//             let activeTab = tabArray[0];
-//             console.log(activeTab); 
-//             console.log("Chutiya");
-//             chrome.scripting.executeScript( { target: {tabId: activeTab.id}, files: ['content.js']} );
-//         }
-//     );
-// });
+        if(tab.url.indexOf("https://www.youtube.com/") !== -1){
+            console.log("ON YOUTUBE");
+            if(tab.url !== current_url){
+                current_url = tab.url;
+                console.log("url has changed");
+                if(tab.url == "https://www.youtube.com/"){
+                    console.log("executing script")
+                    chrome.scripting.executeScript( { target: {tabId: tab.id}, files: ['content.js']} )
+
+                }
+            }
+        } else{
+            console.log("NOT ON YOUTUBE");
+        }
+    }
+)
+
+chrome.webNavigation.onHistoryStateUpdated.addListener(function(details) {
+    chrome.tabs.query(
+        { currentWindow: true, active: true },
+        function (tabArray) { 
+            let activeTab = tabArray[0];
+            console.log(activeTab); 
+            console.log("Chutiya");
+            chrome.scripting.executeScript( { target: {tabId: activeTab.id}, files: ['content.js']} );
+        }
+    );
+});
 
 let array = [
     "The", 

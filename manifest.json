@@ -5,20 +5,14 @@
     "description":"I'm learning to build extensions",
     "background":
     {
-        "service_worker": "background.js"
+        "service_worker": "background.js", "type": "module"
     },
 
    "content_scripts": [
        {
-           "matches": ["https://www.youtube.com/"],
-           "js": ["content.js"],
+           "matches": ["https://www.youtube.com/*"],
+           "js": ["content.js", "jquery.js"],
            "css": ["style.css"]
-       },
-       {
-           "matches": ["https://www.youtube.com/watch?*"],
-           "run_at": "document_end",
-           "js": ["contentwatch.js"],
-           "css": ["stylewatch.css"]
        }
    ],
 
