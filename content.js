@@ -2,17 +2,19 @@ let username = "tarun";
 let group = "1";
 const http = new XMLHttpRequest();
 
-function displayHome(){
-
-	function display1(){
+function displayHome(videos){
+	let videoList = videos[0];
+	let watchedList = videos[1];
+	console.log("displayhome ",videoList)
+	function display1(videoList, watchedList){
 
 		let videosHome = document.createElement('div');
 		videosHome.className = "videosHome";
 		let videoSectionHome = document.createElement('div');
 		videoSectionHome.className = "videoSectionHome";
 	
-		for(var i = 0; i < 12; i++){
-	
+		for(let i = 0; i < 2; i++){
+			console.log("displayhome ", i, videoList[i])
 			let videoContainerHome = document.createElement('article');
 			videoContainerHome.className = "videoContainerHome";
 			let thumbnailHome = document.createElement('a');
@@ -34,7 +36,7 @@ function displayHome(){
 			let videoTitleHome = document.createElement('a');
 			videoTitleHome.href = "#"
 			videoTitleHome.className = "videoTitleHome";
-			videoTitleHome.textContent = "Video Title";
+			videoTitleHome.textContent = videoList[i].snippet.title;
 			// videoTitle.textContent = list[i];
 			let channelNameHome = document.createElement('a');
 			channelNameHome.href = "#"
@@ -84,7 +86,7 @@ function displayHome(){
 	
 	}
 
-	function myFuncHome() {
+	function myFuncHome(videoList,watchedList) {
 		let condition = document.getElementById('primary').childNodes[0];
 		if (!Boolean(condition.tagName)){
 			location.reload();
@@ -93,11 +95,12 @@ function displayHome(){
 		} else {
 			console.log("shit is happening at home");
 			console.log(!Boolean(condition.tagName)); 
-			display1();
+			console.log("myfunchome ",videoList[0])
+			display1(videoList, watchedList);
 		}
 	}
 
-	myFuncHome();
+	myFuncHome(videoList,watchedList);
 
 }
 
@@ -230,7 +233,6 @@ function displayWatch(){
 
 function main(){
 	
-	let youtubeData = getYoutubeData(username, group);
 	if(location.href == "https://www.youtube.com/"){
 		// youtubeData = getYoutubeData(username, group);
 		let loadedHome = document.getElementsByClassName("videosHome");
@@ -240,7 +242,9 @@ function main(){
 		}
 		console.log("running home page");
 		
-		displayHome();
+		getYoutubeData(username, group)
+		// .then(displayHome())
+		// displayHome();
 	} else if(location.href.startsWith("https://www.youtube.com/watch")){
 		let loadedWatch = document.getElementsByClassName("videos");
 		for(let i = 0; i < loadedWatch.length; i++){
@@ -257,7 +261,7 @@ main();
 
 
 
-function getYoutubeData(username, group) {
+async function getYoutubeData(username, group) {
 	let videoList = [], 
 			watchedList = [], 
 			records;
@@ -272,24 +276,21 @@ function getYoutubeData(username, group) {
 	.then(data => {
 		records = data.records;
 		console.log('Records:', records.length, records);
-
-
 		for (let i = 0; i < records.length; ++i) {
-			if (records[i].fields.recommended_by.includes(username)) {
-				console.log("Remove ", records[i].fields.video_id)
-			}
-			else if (records[i].fields.watched_by.includes(username)) {
-				console.log("Watched ", records[i].fields.video_id);
-				youtubeApi(records[i].fields.video_id, watchedList)
-			}
-			else {
-				console.log("Video ", records[i].fields.video_id);
+			if (records[i].fields.recommended_by.includes(username)); 
+				// do nothing
+			else if (records[i].fields.watched_by.includes(username))	
+				youtubeApi(records[i].fields.video_id, watchedList);
+			else 
 				youtubeApi(records[i].fields.video_id, videoList);
-			}
 		}
 		console.log("Video list: ", videoList);
 		console.log("Watched list: ", watchedList);
 		return [videoList, watchedList];
+	})
+	.then((videos) => {
+		console.log("videos ", videos)
+		displayHome(videos);
 	})
 	.catch((error) => {
 		console.error('Error:', error);
@@ -298,20 +299,17 @@ function getYoutubeData(username, group) {
 }
 
 function youtubeApi(url, list) {
-	const http = new XMLHttpRequest();
-	const videoUrl = "https://www.googleapis.com/youtube/v3/videos?id=" + url + "&t&key=AIzaSyDbsWuM_ZIIISlvJoGjLoEoi2G9lFTmkxQ&part=snippet,contentDetails,statistics,status"
-	http.open("GET", videoUrl, true);
-	http.onreadystatechange = function(error){
-		if (http.readyState == 4 && http.status == 200) {
-			if (http.responseText) {
-				let videoDetails = JSON.parse(http.responseText)["items"][0];
-				if (videoDetails) {
-					list.push(videoDetails);
-				}
-			}
-		}
-	}
-	http.send();
+	fetch("https://www.googleapis.com/youtube/v3/videos?id=" + url + "&t&key=AIzaSyDbsWuM_ZIIISlvJoGjLoEoi2G9lFTmkxQ&part=snippet,contentDetails,statistics,status", {
+		method: "GET"
+	})
+	.then(response => response.json())
+	.then(result => {
+		list.push(result["items"][0])
+		// console.log(list)
+	})
+	.catch(e => {
+		console.log("error youtubeApi: ", e)
+	})
 }
 
 
