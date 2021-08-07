@@ -104,6 +104,7 @@ function displayHome(){
 
 function displayWatch(){
 	
+			let videoContainer = document.createElement('article');
 	function display(){
 
 		let videos = document.createElement('div');
@@ -113,7 +114,6 @@ function displayWatch(){
 	
 		for(var i = 0; i < 4; i++){
 	
-			let videoContainer = document.createElement('article');
 			videoContainer.className = "videoContainer";
 			let thumbnailContainer = document.createElement('div');
 			thumbnailContainer.className = "thumbnailContainer";
@@ -230,10 +230,11 @@ function displayWatch(){
 
 function main(){
 	
-	let youtubeData;
+	let youtubeData = getYoutubeData(username, group);
 	if(location.href == "https://www.youtube.com/"){
-		youtubeData = getYoutubeData(username, group);
+		// youtubeData = getYoutubeData(username, group);
 		let loadedHome = document.getElementsByClassName("videosHome");
+		console.log(loadedHome.length)
 		for(let i = 0; i < loadedHome.length; i++){
 			loadedHome.item(i).remove();
 		}
@@ -257,7 +258,9 @@ main();
 
 
 function getYoutubeData(username, group) {
-	let videoList, watchedList = [], records, videoUrl,videoDetails;
+	let videoList = [], 
+			watchedList = [], 
+			records;
 	fetch("https://api.airtable.com/v0/app7p5QzizdfWc9z4/Group_" + group + "?api_key=key9aJ5YsRgxI007V", {
 	headers: {
 			Authorization: "Bearer key9aJ5YsRgxI007V",
@@ -268,7 +271,8 @@ function getYoutubeData(username, group) {
 	.then(response => response.json())
 	.then(data => {
 		records = data.records;
-		console.log('Success:', records.length);
+		console.log('Records:', records.length, records);
+
 
 		for (let i = 0; i < records.length; ++i) {
 			if (records[i].fields.recommended_by.includes(username)) {
@@ -276,28 +280,44 @@ function getYoutubeData(username, group) {
 			}
 			else if (records[i].fields.watched_by.includes(username)) {
 				console.log("Watched ", records[i].fields.video_id);
-				videoUrl = "https://www.googleapis.com/youtube/v3/videos?id=" + records[i].fields.video_id + "&t&key=AIzaSyDbsWuM_ZIIISlvJoGjLoEoi2G9lFTmkxQ&part=snippet,contentDetails,statistics,status"
-				http.open("GET", videoUrl);
-				http.send();
-				http.onreadystatechange = error => {
-					// while(this.readystate != 4 && this.status != 200) {}
-					if (this.readystate == 4 && this.status == 200) {
-						videoDetails = JSON.parse(http.responseText)["items"][0];
-						console.log(videoDetails);
-					}
-				}
-				watchedList.push(videoDetails);
-				console.log(watchedList);
+				youtubeApi(records[i].fields.video_id, watchedList)
+			}
+			else {
+				console.log("Video ", records[i].fields.video_id);
+				youtubeApi(records[i].fields.video_id, videoList);
 			}
 		}
+		console.log("Video list: ", videoList);
+		console.log("Watched list: ", watchedList);
+		return [videoList, watchedList];
 	})
 	.catch((error) => {
 		console.error('Error:', error);
 	});
 
-
 }
 
+function youtubeApi(url, list) {
+	const http = new XMLHttpRequest();
+	const videoUrl = "https://www.googleapis.com/youtube/v3/videos?id=" + url + "&t&key=AIzaSyDbsWuM_ZIIISlvJoGjLoEoi2G9lFTmkxQ&part=snippet,contentDetails,statistics,status"
+	http.open("GET", videoUrl, true);
+	http.onreadystatechange = function(error){
+		if (http.readyState == 4 && http.status == 200) {
+			if (http.responseText) {
+				let videoDetails = JSON.parse(http.responseText)["items"][0];
+				if (videoDetails) {
+					list.push(videoDetails);
+				}
+			}
+		}
+	}
+	http.send();
+}
+
+
+async function getDetails() {
+	let results = await getYoutubeData(username, group)
+}
 
 // chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 //	 if (request.action === 'fetchArray') {
@@ -361,46 +381,3 @@ function getYoutubeData(username, group) {
 // $('<h1>HAHAHA</h1>').insertBefore(element, null);
 
 //put it in the beginning of content
-
-
-let videoUrl1 = "https://www.googleapis.com/youtube/v3/videos?id=OFFTIIUDNK4&t&key=AIzaSyDbsWuM_ZIIISlvJoGjLoEoi2G9lFTmkxQ&part=snippet,contentDetails,statistics,status"
-let videoDetails1;
-
-http.open("GET", videoUrl1);
-http.send();
-
-http.onreadystatechange = error => {
-	if (this.readystate == 4 && this.status == 200) {
-	videoDetails1 = JSON.parse(http.responseText)["items"][0];
-	console.log(videoDetails1)
-	}
-}
-
-let data = {
-	"records": [
-	{
-
-	"fields": {
-		"Name": "abcd",
-		"recommended_by": ["jo"],
-		"watched_by" : ["nim"]
-	}
-	}
-	]
-}
-
-// fetch("https://api.airtable.com/v0/app7p5QzizdfWc9z4/Group_1?api_key=key9aJ5YsRgxI007V", {
-// 	// body: JSON.stringify(data),
-// 	headers: {
-// 		Authorization: "Bearer key9aJ5YsRgxI007V",
-// 		"Content-Type": "application/json"
-// 	},
-// 	method: "GET"
-// 	})
-// .then(response => response.json())
-// .then(data => {
-// 	console.log('Success:', data);
-// })
-// .catch((error) => {
-// 	console.error('Error:', error);
-// });
