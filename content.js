@@ -2,11 +2,15 @@ let username = "tarun";
 let group = "1";
 const http = new XMLHttpRequest();
 
-function displayHome(videos){
-	let videoList = videos[0];
-	let watchedList = videos[1];
-	console.log("displayhome ",videoList)
-	function display1(videoList, watchedList){
+function displayHome(videoListData){
+	
+	console.log("displayhome ",videoListData)
+	
+	function display1(videoListData){
+		console.log("display1 ",typeof(videoListData))
+		let videoList = videoListData;
+		console.log("display1 videoList ", videoList.length)
+		let watchedList = videoListData[1];
 
 		let videosHome = document.createElement('div');
 		videosHome.className = "videosHome";
@@ -22,7 +26,7 @@ function displayHome(videos){
 			thumbnailHome.className = "thumbnailHome";
 			thumbnailHome.setAttribute("data-duration", "12:24");
 			let thumbnailImgHome = document.createElement('img');
-			thumbnailImgHome.src = "https://img.youtube.com/vi/rhPSo4_Tgi0/1.jpg";
+			thumbnailImgHome.src = videoList[i].snippet.thumbnails.default.url;
 			thumbnailImgHome.className = "thumbnailImgHome";
 			let vidBottomSectionHome = document.createElement('div');
 			vidBottomSectionHome.className = "vidBottomSectionHome";
@@ -37,6 +41,7 @@ function displayHome(videos){
 			videoTitleHome.href = "#"
 			videoTitleHome.className = "videoTitleHome";
 			videoTitleHome.textContent = videoList[i].snippet.title;
+			// videoTitleHome.textContent = "Title";
 			// videoTitle.textContent = list[i];
 			let channelNameHome = document.createElement('a');
 			channelNameHome.href = "#"
@@ -86,7 +91,7 @@ function displayHome(videos){
 	
 	}
 
-	function myFuncHome(videoList,watchedList) {
+	function myFuncHome(videoListData) {
 		let condition = document.getElementById('primary').childNodes[0];
 		if (!Boolean(condition.tagName)){
 			location.reload();
@@ -95,12 +100,12 @@ function displayHome(videos){
 		} else {
 			console.log("shit is happening at home");
 			console.log(!Boolean(condition.tagName)); 
-			console.log("myfunchome ",videoList[0])
-			display1(videoList, watchedList);
+			console.log("myfunchome ",videoListData[0])
+			display1(videoListData);
 		}
 	}
 
-	myFuncHome(videoList,watchedList);
+	myFuncHome(videoListData);
 
 }
 
@@ -231,7 +236,7 @@ function displayWatch(){
 
 
 
-function main(){
+function main(videoListData){
 	
 	if(location.href == "https://www.youtube.com/"){
 		// youtubeData = getYoutubeData(username, group);
@@ -242,9 +247,9 @@ function main(){
 		}
 		console.log("running home page");
 		
-		getYoutubeData(username, group)
+		// getYoutubeData(username, group)
 		// .then(displayHome())
-		// displayHome();
+		displayHome(videoListData);
 	} else if(location.href.startsWith("https://www.youtube.com/watch")){
 		let loadedWatch = document.getElementsByClassName("videos");
 		for(let i = 0; i < loadedWatch.length; i++){
@@ -256,66 +261,76 @@ function main(){
 	console.log(location.href);
 }
 
-main();
+
+// getYoutubeData(username, group)
+// main();
 
 
 
 
-async function getYoutubeData(username, group) {
-	let videoList = [], 
-			watchedList = [], 
-			records;
-	fetch("https://api.airtable.com/v0/app7p5QzizdfWc9z4/Group_" + group + "?api_key=key9aJ5YsRgxI007V", {
-	headers: {
-			Authorization: "Bearer key9aJ5YsRgxI007V",
-			"Content-Type": "application/json"
-		},
-	method: "GET"
-	})
-	.then(response => response.json())
-	.then(data => {
-		records = data.records;
-		console.log('Records:', records.length, records);
-		for (let i = 0; i < records.length; ++i) {
-			if (records[i].fields.recommended_by.includes(username)); 
-				// do nothing
-			else if (records[i].fields.watched_by.includes(username))	
-				youtubeApi(records[i].fields.video_id, watchedList);
-			else 
-				youtubeApi(records[i].fields.video_id, videoList);
-		}
-		console.log("Video list: ", videoList);
-		console.log("Watched list: ", watchedList);
-		return [videoList, watchedList];
-	})
-	.then((videos) => {
-		console.log("videos ", videos)
-		displayHome(videos);
-	})
-	.catch((error) => {
-		console.error('Error:', error);
-	});
-
-}
-
-function youtubeApi(url, list) {
-	fetch("https://www.googleapis.com/youtube/v3/videos?id=" + url + "&t&key=AIzaSyDbsWuM_ZIIISlvJoGjLoEoi2G9lFTmkxQ&part=snippet,contentDetails,statistics,status", {
-		method: "GET"
-	})
-	.then(response => response.json())
-	.then(result => {
-		list.push(result["items"][0])
-		// console.log(list)
-	})
-	.catch(e => {
-		console.log("error youtubeApi: ", e)
-	})
-}
+// async function getYoutubeData(username, group) {
+// 	let videoList = [], 
+// 			watchedList = [], 
+// 			records;
+// 	let promises = [];
+// 	fetch("https://api.airtable.com/v0/app7p5QzizdfWc9z4/Group_" + group + "?api_key=key9aJ5YsRgxI007V", {
+// 	headers: {
+// 			Authorization: "Bearer key9aJ5YsRgxI007V",
+// 			"Content-Type": "application/json"
+// 		},
+// 	method: "GET"
+// 	})
+// 	.then(response => response.json())
+// 	.then(data => {
+// 		records = data.records;
+// 		console.log('Records:', records.length, records);
+// 		(async () => {
+// 			for (let i = 0; i < records.length; ++i) {
+// 				if (records[i].fields.recommended_by.includes(username)); 
+// 					// do nothing
+// 				else if (records[i].fields.watched_by.includes(username))	{
+// 					await youtubeApi(records[i].fields.video_id, 'w')
+// 						.then((result) => watchedList.push(result))
+// 						.catch(error => console.log(error))
+// 				}
+// 				else {
+// 					// youtubeApi(records[i].fields.video_id, videoList, vidCount++);
+// 					await youtubeApi(records[i].fields.video_id, 'v')
+// 						.then((result) => videoList.push(result))
+// 						.catch(error => console.log(error))
+// 				}
+// 			}
+// 		})()
+// 		// return [videoList, watchedList];
+// 	})
+// 	.then(() => {
+// 		console.log("videos ", [videoList, watchedList])
+// 		// displayHome(videos);
+// 		main([videoList,watchedList])
+// 	})
+// 	.catch((error) => {
+// 		console.error('Error:', error);
+// 	});
 
 
-async function getDetails() {
-	let results = await getYoutubeData(username, group)
-}
+// }
+
+// function youtubeApi(url, list) {
+
+// function youtubeApi(url, list) {
+
+// 	// return new Promise((resolve, reject) => {
+// 		fetch("https://www.googleapis.com/youtube/v3/videos?id=" + url + "&t&key=AIzaSyDbsWuM_ZIIISlvJoGjLoEoi2G9lFTmkxQ&part=snippet,contentDetails,statistics,status", {
+// 			method: "GET"
+// 		})
+// 		.then(response => response.json())
+// 		.then(result => {
+// 			list.push(result["items"][0])
+// 		})
+// 		.catch(e => console.log("error youtubeApi: " + e))
+// 	// })
+// }
+
 
 // chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 //	 if (request.action === 'fetchArray') {
@@ -379,3 +394,91 @@ async function getDetails() {
 // $('<h1>HAHAHA</h1>').insertBefore(element, null);
 
 //put it in the beginning of content
+
+
+getData(username, group)
+
+
+function getData(username, group) {
+	fetch("https://api.airtable.com/v0/app7p5QzizdfWc9z4/Group_" + group + "?api_key=key9aJ5YsRgxI007V", {
+	headers: {
+			Authorization: "Bearer key9aJ5YsRgxI007V",
+			"Content-Type": "application/json"
+		},
+	method: "GET"
+	})
+	.then(response => response.json())
+	.then(data => {console.log("getData success: ", data); sortVideo(data, username)} )
+	.catch(e => console.log("getData error: ", e))
+}
+
+
+function sortVideo(data, username) {
+	let watched = [];
+	let videos = [];
+
+	records = data.records;
+	for (let record of records) {
+		if (record.fields.recommended_by.includes(username)); 
+				// do nothing
+		else if (record.fields.watched_by.includes(username))	{
+			watched.push(record.fields.video_id)
+		}
+		else {
+			videos.push(record.fields.video_id)
+		}
+	}
+	console.log("sortVideo success: ", watched, videos);
+	getYoutubeData([watched, videos]);
+}
+
+
+async function getYoutubeData(videos) {
+	let watchedList = videos[0];
+	let videoList = videos[1];
+	let watchedData = [];
+	let videoData = [];
+	const watchedPromises = [];
+
+	for (let video of watchedList) {
+		// console.log("getytdata watched ", video)
+		watchedPromises.push(fetch("https://www.googleapis.com/youtube/v3/videos?id=" + video + "&t&key=AIzaSyDbsWuM_ZIIISlvJoGjLoEoi2G9lFTmkxQ&part=snippet,contentDetails,statistics,status", {
+			method: "GET"
+		})
+			.then(response => response.json())
+			.then(result => {
+					return result.items[0]
+			})
+		.catch(e => console.log("error youtubeApi: " + e))
+		)
+	}
+
+	Promise.all(watchedPromises)
+		.then((values) => {
+			console.log("watchedPromises ", watchedPromises)
+			console.log("promise all ", values)
+			main(values)
+		})
+
+
+}
+
+
+function youtubeApi(url, list) {
+
+	// return new Promise((resolve, reject) => {
+		fetch("https://www.googleapis.com/youtube/v3/videos?id=" + url + "&t&key=AIzaSyDbsWuM_ZIIISlvJoGjLoEoi2G9lFTmkxQ&part=snippet,contentDetails,statistics,status", {
+			method: "GET"
+		})
+			.then(response => response.json())
+			.then(result => {
+				// resolve(() => {
+					// console.log("result ", result["items"][0])
+					// list.push(result.items[0])
+					return result.items[0]
+				})()
+			// })
+			// .catch(e => reject("error youtubeApi: " + e)())
+		.catch(e => console.log("error youtubeApi: " + e))
+	// })
+}
