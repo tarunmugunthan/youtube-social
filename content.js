@@ -1,24 +1,36 @@
 let username = "tarun";
 let group = "1";
-const http = new XMLHttpRequest();
+
+
 
 function displayHome(videoListData){
 	
-	console.log("displayhome ",videoListData)
+	console.log("displayhome ",  JSON.parse(JSON.stringify(videoListData)))
+	myFuncHome(videoListData);
 	
+	function myFuncHome(videoListData) {
+		let condition = document.getElementById('primary').childNodes[0];
+		if (!Boolean(condition.tagName)){
+			location.reload();
+			setTimeout(myFuncHome, 1000);
+			console.log("tagname not found")
+		} else {
+			console.log("shit is happening at home", !Boolean(condition.tagName));
+			display1(videoListData);
+		}
+
 	function display1(videoListData){
-		console.log("display1 ",typeof(videoListData))
-		let videoList = videoListData;
+		let videoList = videoListData.videos[0];
 		console.log("display1 videoList ", videoList.length)
-		let watchedList = videoListData[1];
 
 		let videosHome = document.createElement('div');
 		videosHome.className = "videosHome";
 		let videoSectionHome = document.createElement('div');
 		videoSectionHome.className = "videoSectionHome";
 	
-		for(let i = 0; i < 2; i++){
-			console.log("displayhome ", i, videoList[i])
+		for(let i = 0; i < videoList.length; i++){
+			console.log("display1 ", i, videoList[i])
+			let currentVideo = videoList[i]
 			let videoContainerHome = document.createElement('article');
 			videoContainerHome.className = "videoContainerHome";
 			let thumbnailHome = document.createElement('a');
@@ -26,7 +38,7 @@ function displayHome(videoListData){
 			thumbnailHome.className = "thumbnailHome";
 			thumbnailHome.setAttribute("data-duration", "12:24");
 			let thumbnailImgHome = document.createElement('img');
-			thumbnailImgHome.src = videoList[i].snippet.thumbnails.default.url;
+			thumbnailImgHome.src = currentVideo.snippet.thumbnails.standard.url;
 			thumbnailImgHome.className = "thumbnailImgHome";
 			let vidBottomSectionHome = document.createElement('div');
 			vidBottomSectionHome.className = "vidBottomSectionHome";
@@ -40,21 +52,19 @@ function displayHome(videoListData){
 			let videoTitleHome = document.createElement('a');
 			videoTitleHome.href = "#"
 			videoTitleHome.className = "videoTitleHome";
-			videoTitleHome.textContent = videoList[i].snippet.title;
-			// videoTitleHome.textContent = "Title";
-			// videoTitle.textContent = list[i];
+			videoTitleHome.textContent = currentVideo.snippet.title;
 			let channelNameHome = document.createElement('a');
 			channelNameHome.href = "#"
 			channelNameHome.className = "channelNameHome";
-			channelNameHome.textContent = "Channel Name";
+			channelNameHome.textContent = currentVideo.snippet.channelTitle;
 			let videoMetaHome = document.createElement('div');
 			videoMetaHome.className = "videoMetaHome";
 			let viewsHome = document.createElement('span');
-			viewsHome.textContent = "12k views";
+			viewsHome.textContent = getViews(currentVideo.statistics.viewCount) + " views";
 			let dotHome = document.createElement('span')
 			dotHome.textContent = " • "
 			let dateHome = document.createElement('span');
-			dateHome.textContent = "1 week ago"
+			dateHome.textContent = getTime(currentVideo.snippet.publishedAt);
 			let recommenderHome = document.createElement('div');
 			recommenderHome.className = "reccommenderHome";
 			recommenderHome.textContent = "Recommended by Tarun"
@@ -91,21 +101,8 @@ function displayHome(videoListData){
 	
 	}
 
-	function myFuncHome(videoListData) {
-		let condition = document.getElementById('primary').childNodes[0];
-		if (!Boolean(condition.tagName)){
-			location.reload();
-			setTimeout(myFuncHome, 1000);
-			console.log("tagname not found")
-		} else {
-			console.log("shit is happening at home");
-			console.log(!Boolean(condition.tagName)); 
-			console.log("myfunchome ",videoListData[0])
-			display1(videoListData);
-		}
 	}
 
-	myFuncHome(videoListData);
 
 }
 
@@ -236,23 +233,89 @@ function displayWatch(){
 
 
 
+function getViews(views) {
+	views = "" + views
+	let result = "", l = views.length
+	if (l <= 3) 
+		result += views
+	else if (l <= 6)
+		result += views.slice(0,-3) + "K"
+	else if (l <= 9)
+		result += views.slice(0,-6) + "M"
+	else if (l <= 12) 
+		result += views.slice(0, -9) + "B"
+	return result
+}
+
+
+
+function getTime(previous) {
+
+		let now = Date.now();
+		previous = Date.parse(previous)
+		let res 
+
+    var msPerMinute = 60 * 1000;
+    var msPerHour = msPerMinute * 60;
+    var msPerDay = msPerHour * 24;
+    var msPerMonth = msPerDay * 30;
+    var msPerYear = msPerDay * 365;
+
+    var elapsed = now - previous;
+
+    if (elapsed < msPerMinute) {
+			res = Math.round(elapsed/1000)
+      return res + (res == 1 ? " second ago" : ' seconds ago');   
+		}
+
+    else if (elapsed < msPerHour) {
+      res = Math.round(elapsed/msPerMinute)
+			return  res + (res == 1 ? " minute ago" : ' minutes ago');   
+		}
+
+    else if (elapsed < msPerDay ) {
+      res = Math.round(elapsed/msPerHour)
+      return res + (res == 1 ? " hour ago" : ' hours ago');   
+    }
+
+    else if (elapsed < msPerMonth) {
+      res = Math.round(elapsed/msPerDay)
+      return res + (res == 1 ? " day ago" : ' days ago');   
+    }
+
+    else if (elapsed < msPerYear) {
+      res = Math.round(elapsed/msPerMonth)
+      return res + (res == 1 ? " month ago" : ' months ago');   
+    }
+
+    else {
+      res = Math.round(elapsed/msPerYear)
+      return res + (res == 1 ? " year ago" : ' years ago');   
+    }
+}
+
+function getDuration(duration) {
+	
+}
+
+
 function main(videoListData){
 	
-	if(location.href == "https://www.youtube.com/"){
-		// youtubeData = getYoutubeData(username, group);
+	if (location.href == "https://www.youtube.com/"){
 		let loadedHome = document.getElementsByClassName("videosHome");
 		console.log(loadedHome.length)
-		for(let i = 0; i < loadedHome.length; i++){
+
+		for(let i = 0; i < loadedHome.length; i++)
 			loadedHome.item(i).remove();
-		}
-		console.log("running home page");
-		
-		// getYoutubeData(username, group)
-		// .then(displayHome())
+
+		// console.log("running home page");
 		displayHome(videoListData);
-	} else if(location.href.startsWith("https://www.youtube.com/watch")){
+
+	} 
+
+	else if (location.href.startsWith("https://www.youtube.com/watch")){
 		let loadedWatch = document.getElementsByClassName("videos");
-		for(let i = 0; i < loadedWatch.length; i++){
+		for (let i = 0; i < loadedWatch.length; i++){
 			loadedWatch.item(i).remove();
 		}
 		console.log("running watch page")
@@ -260,95 +323,6 @@ function main(videoListData){
 	}
 	console.log(location.href);
 }
-
-
-// getYoutubeData(username, group)
-// main();
-
-
-
-
-// async function getYoutubeData(username, group) {
-// 	let videoList = [], 
-// 			watchedList = [], 
-// 			records;
-// 	let promises = [];
-// 	fetch("https://api.airtable.com/v0/app7p5QzizdfWc9z4/Group_" + group + "?api_key=key9aJ5YsRgxI007V", {
-// 	headers: {
-// 			Authorization: "Bearer key9aJ5YsRgxI007V",
-// 			"Content-Type": "application/json"
-// 		},
-// 	method: "GET"
-// 	})
-// 	.then(response => response.json())
-// 	.then(data => {
-// 		records = data.records;
-// 		console.log('Records:', records.length, records);
-// 		(async () => {
-// 			for (let i = 0; i < records.length; ++i) {
-// 				if (records[i].fields.recommended_by.includes(username)); 
-// 					// do nothing
-// 				else if (records[i].fields.watched_by.includes(username))	{
-// 					await youtubeApi(records[i].fields.video_id, 'w')
-// 						.then((result) => watchedList.push(result))
-// 						.catch(error => console.log(error))
-// 				}
-// 				else {
-// 					// youtubeApi(records[i].fields.video_id, videoList, vidCount++);
-// 					await youtubeApi(records[i].fields.video_id, 'v')
-// 						.then((result) => videoList.push(result))
-// 						.catch(error => console.log(error))
-// 				}
-// 			}
-// 		})()
-// 		// return [videoList, watchedList];
-// 	})
-// 	.then(() => {
-// 		console.log("videos ", [videoList, watchedList])
-// 		// displayHome(videos);
-// 		main([videoList,watchedList])
-// 	})
-// 	.catch((error) => {
-// 		console.error('Error:', error);
-// 	});
-
-
-// }
-
-// function youtubeApi(url, list) {
-
-// function youtubeApi(url, list) {
-
-// 	// return new Promise((resolve, reject) => {
-// 		fetch("https://www.googleapis.com/youtube/v3/videos?id=" + url + "&t&key=AIzaSyDbsWuM_ZIIISlvJoGjLoEoi2G9lFTmkxQ&part=snippet,contentDetails,statistics,status", {
-// 			method: "GET"
-// 		})
-// 		.then(response => response.json())
-// 		.then(result => {
-// 			list.push(result["items"][0])
-// 		})
-// 		.catch(e => console.log("error youtubeApi: " + e))
-// 	// })
-// }
-
-
-// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-//	 if (request.action === 'fetchArray') {
-//		 console.log(request.content);
-//		 sendResponse({confirmation: "got it"});
-//	 }
-// });
-
-
-
-
-
-// display();
-
-
-
-
-
 
 
 // var box = document.createElement("div");
@@ -396,8 +370,6 @@ function main(videoListData){
 //put it in the beginning of content
 
 
-getData(username, group)
-
 
 function getData(username, group) {
 	fetch("https://api.airtable.com/v0/app7p5QzizdfWc9z4/Group_" + group + "?api_key=key9aJ5YsRgxI007V", {
@@ -408,7 +380,7 @@ function getData(username, group) {
 	method: "GET"
 	})
 	.then(response => response.json())
-	.then(data => {console.log("getData success: ", data); sortVideo(data, username)} )
+	.then(data => sortVideo(data, username))
 	.catch(e => console.log("getData error: ", e))
 }
 
@@ -421,14 +393,14 @@ function sortVideo(data, username) {
 	for (let record of records) {
 		if (record.fields.recommended_by.includes(username)); 
 				// do nothing
-		else if (record.fields.watched_by.includes(username))	{
+		else if (record.fields.watched_by.includes(username))	
 			watched.push(record.fields.video_id)
-		}
-		else {
+
+		else 
 			videos.push(record.fields.video_id)
-		}
+
 	}
-	console.log("sortVideo success: ", watched, videos);
+	// console.log("sortVideo success: ", watched, videos);
 	getYoutubeData([watched, videos]);
 }
 
@@ -436,49 +408,66 @@ function sortVideo(data, username) {
 async function getYoutubeData(videos) {
 	let watchedList = videos[0];
 	let videoList = videos[1];
-	let watchedData = [];
-	let videoData = [];
 	const watchedPromises = [];
+	const videoPromises = [];
+
+	const videoListData = {
+		watched: [],
+		videos: []
+	};
+
+	for (let video of videoList) {
+		videoPromises.push(fetch("https://www.googleapis.com/youtube/v3/videos?id=" + video + "&t&key=AIzaSyDbsWuM_ZIIISlvJoGjLoEoi2G9lFTmkxQ&part=snippet,contentDetails,statistics,status", {
+			method: "GET"
+		})
+			.then(response => response.json())
+			.then(result => result.items[0])
+			.catch(e => console.log("error youtubeApi: " + e))
+		)
+	}
 
 	for (let video of watchedList) {
-		// console.log("getytdata watched ", video)
 		watchedPromises.push(fetch("https://www.googleapis.com/youtube/v3/videos?id=" + video + "&t&key=AIzaSyDbsWuM_ZIIISlvJoGjLoEoi2G9lFTmkxQ&part=snippet,contentDetails,statistics,status", {
 			method: "GET"
 		})
 			.then(response => response.json())
-			.then(result => {
-					return result.items[0]
-			})
-		.catch(e => console.log("error youtubeApi: " + e))
+			.then(result => result.items[0])
+			.catch(e => console.log("error youtubeApi: " + e))
 		)
 	}
 
+	
+	Promise.all(videoPromises)
+		.then((values) => {
+			videoListData.videos.push(values)
+			console.log("videoPromises pushed", videoListData.videos.length, videoListData.watched.length)
+			console.log("videoListData", videoListData)
+			if (videoListData.watched.length === watchedList.length) {
+				console.log(1)
+				main(videoListData)
+			}
+		})
+
 	Promise.all(watchedPromises)
 		.then((values) => {
-			console.log("watchedPromises ", watchedPromises)
-			console.log("promise all ", values)
-			main(values)
+			videoListData.watched.push(...values)
+			console.log("watchedPromises pushed", videoListData.videos.length, videoListData.watched.length)
+			console.log("videoListData", videoListData)
+			if (videoListData.videos.length === videoList.length) {
+				console.log(2)
+				main(videoListData)
+			}
 		})
-
-
 }
 
 
-function youtubeApi(url, list) {
 
-	// return new Promise((resolve, reject) => {
-		fetch("https://www.googleapis.com/youtube/v3/videos?id=" + url + "&t&key=AIzaSyDbsWuM_ZIIISlvJoGjLoEoi2G9lFTmkxQ&part=snippet,contentDetails,statistics,status", {
-			method: "GET"
-		})
-			.then(response => response.json())
-			.then(result => {
-				// resolve(() => {
-					// console.log("result ", result["items"][0])
-					// list.push(result.items[0])
-					return result.items[0]
-				})()
-			// })
-			// .catch(e => reject("error youtubeApi: " + e)())
-		.catch(e => console.log("error youtubeApi: " + e))
-	// })
-}
+
+
+
+
+
+
+/***  CODE EXECUTES FROM HERE  ***/
+
+getData(username, group)
