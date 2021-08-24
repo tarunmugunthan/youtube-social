@@ -66,7 +66,7 @@ function displayHome(videoListData){
 			let channelNameHome = document.createElement('a');
 			channelNameHome.href = "#"
 			channelNameHome.className = "channelNameHome";
-			channelNameHome.textContent = currentVideo.youtubeData.snippet.channelTitle + " " + currentVideo.youtubeData.id;
+			channelNameHome.textContent = currentVideo.youtubeData.snippet.channelTitle;
 			let videoMetaHome = document.createElement('div');
 			videoMetaHome.className = "videoMetaHome";
 			let viewsHome = document.createElement('span');
