@@ -40,7 +40,7 @@ function displayHome(videoListData){
 			let videoContainerHome = document.createElement('article');
 			videoContainerHome.className = "videoContainerHome";
 			let thumbnailHome = document.createElement('a');
-			thumbnailHome.href = "#";
+			thumbnailHome.href = "https://www.youtube.com/watch?v=" + currentVideo.youtubeData.id;
 			thumbnailHome.className = "thumbnailHome";
 			thumbnailHome.setAttribute("data-duration", getDuration(currentVideo.youtubeData.contentDetails.duration));
 			let thumbnailImgHome = document.createElement('img');
@@ -124,13 +124,11 @@ function displayHome(videoListData){
 
 	}
 
-
 }
 
 
 function displayWatch(videoListData){
 	
-	let videoContainer = document.createElement('article');
 	
 	myFunc(videoListData);
 	
@@ -152,23 +150,27 @@ function displayWatch(videoListData){
 	
 	function display(videoListData){
 
-	let videoList = videoListData.videos
+	let videoList = videoListData.videos;
+	console.log(videoList)
 	let videos = document.createElement('div');
 	videos.className = "videos";
 	let videoSection = document.createElement('div');
 	videoSection.className = "videoSection";
 
-	for(var i = 0; i < 4; i++){
+	for(var i = 0; i < ((videoList.length < 4) ? videoList.length : 4); i++){
 
+		console.log(videoList[i])
+		let currentVideo = videoList[i]
+		let videoContainer = document.createElement('article');
 		videoContainer.className = "videoContainer";
 		let thumbnailContainer = document.createElement('div');
 		thumbnailContainer.className = "thumbnailContainer";
 		let thumbnail = document.createElement('a');
 		thumbnail.href = "#";
 		thumbnail.className = "thumbnail";
-		thumbnail.setAttribute("data-duration", "12:24");
+		thumbnail.setAttribute("data-duration", getDuration(currentVideo.youtubeData.contentDetails.duration));
 		let thumbnailImg = document.createElement('img');
-		thumbnailImg.src = "https://img.youtube.com/vi/rhPSo4_Tgi0/1.jpg";
+		thumbnailImg.src = currentVideo.youtubeData.snippet.thumbnails.standard.url;
 		thumbnailImg.className = "thumbnailImg";
 		let vidBottomSection = document.createElement('div');
 		vidBottomSection.className = "vidBottomSection";
@@ -182,28 +184,45 @@ function displayWatch(videoListData){
 		let videoTitle = document.createElement('a');
 		videoTitle.href = "#"
 		videoTitle.className = "videoTitle";
-		videoTitle.textContent = "Video Title: This is me rambling about stuff to fill up space";
+		videoTitle.textContent = currentVideo.youtubeData.snippet.title;
 		// videoTitle.textContent = list[i];
 		let channelName = document.createElement('a');
 		channelName.href = "#"
 		channelName.className = "channelName";
-		channelName.textContent = "Channel Name";
+		channelName.textContent = currentVideo.youtubeData.snippet.channelTitle;
 		let videoMeta = document.createElement('div');
 		videoMeta.className = "videoMeta";
 		let views = document.createElement('span');
-		views.textContent = "12k views";
+		views.textContent = getViews(currentVideo.youtubeData.statistics.viewCount) + " views";
 		let dot = document.createElement('span')
 		dot.textContent = " • "
 		let date = document.createElement('span');
-		date.textContent = "1 week ago"
-		let reccomender = document.createElement('div');
-		reccomender.className = "recommender";
-		reccomender.textContent = "Recommended by Tarun, Rishabh, Advait, Rishi, Richa, Pranjal"
+		date.textContent = getTime(currentVideo.youtubeData.snippet.publishedAt);
+		let recommender = document.createElement('div');
+		recommender.className = "recommender";
+		let recoText = "Recommended by ";
+		let recoNum = currentVideo.recordData.fields.recommended_by.length;
+		
+		if (recoNum >= 1) 
+			recoText += currentVideo.recordData.fields.recommended_by[0]
+		
+		if (recoNum == 2) 
+			recoText += " and " + currentVideo.recordData.fields.recommended_by[1]
+
+		if (recoNum >= 3) {
+			recoText += ", " + currentVideo.recordData.fields.recommended_by[1] + " and "
+			if (recoNum == 3) 
+				recoText += currentVideo.recordData.fields.recommended_by[2]
+			else 
+				recoText += (recoNum - 2) + " more people"
+		}
+
+		recommender.textContent = recoText;
 
 		videoMeta.appendChild(views);
 		videoMeta.appendChild(dot);
 		videoMeta.appendChild(date);
-		videoMeta.appendChild(reccomender);
+		videoMeta.appendChild(recommender);
 
 		videoDetails.appendChild(videoTitle);
 		videoDetails.appendChild(channelName);
