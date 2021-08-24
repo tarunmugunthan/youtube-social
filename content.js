@@ -39,6 +39,7 @@ function displayHome(videoListData){
 		for(let i = 0; i < videoList.length; i++){
 			// console.log("display1 ", i, videoList[i])	
 			let currentVideo = videoList[i]
+			
 			let videoContainerHome = document.createElement('article');
 			videoContainerHome.className = "videoContainerHome";
 			let thumbnailHome = document.createElement('a');
@@ -55,6 +56,7 @@ function displayHome(videoListData){
 			let iconImgHome = document.createElement('img');
 			iconImgHome.src = "http://unsplash.it/36/36?gravity=center";
 			iconImgHome.className = "iconImgHome";
+			
 			let videoDetailsHome = document.createElement('div');
 			videoDetailsHome.className = "videoDetailsHome";
 			let videoTitleHome = document.createElement('a');
@@ -64,7 +66,7 @@ function displayHome(videoListData){
 			let channelNameHome = document.createElement('a');
 			channelNameHome.href = "#"
 			channelNameHome.className = "channelNameHome";
-			channelNameHome.textContent = currentVideo.youtubeData.snippet.channelTitle;
+			channelNameHome.textContent = currentVideo.youtubeData.snippet.channelTitle + " " + currentVideo.youtubeData.id;
 			let videoMetaHome = document.createElement('div');
 			videoMetaHome.className = "videoMetaHome";
 			let viewsHome = document.createElement('span');
@@ -267,8 +269,6 @@ function getViews(views) {
 	return result
 }
 
-
-
 function getTime(previous) {
 
 		let now = Date.now();
@@ -329,7 +329,7 @@ function getDuration(duration) {
 
 	duration = duration.slice(2,duration.length)
 	for (let char of duration) {
-		if (isAlpha(char)) {
+		if (/^[A-Z]$/i.test(char)) {															// regex
 			if (char == "H")
 				time.h = duration.slice(0, duration.indexOf(char))
 			else if (char == "M") 
@@ -345,12 +345,6 @@ function getDuration(duration) {
 
 	return result
 }
-
-
-function isAlpha(c) {
-	return /^[A-Z]$/i.test(c);
-}
-
 
 function main(videoListData){
 	
@@ -446,11 +440,15 @@ function sortVideo(data, username) {
 	for (let record of records) {
 		if (record.fields.recommended_by.includes(username)); 
 				// do nothing
-		else if (record.fields.watched_by.includes(username))	
+		else if (record.fields.watched_by.includes(username))	{
+			record.fields.lastModified = Date.parse(record.fields.lastModified)
 			watched.push(record)
+		}
 
-		else 
+		else {
+			record.fields.lastModified = Date.parse(record.fields.lastModified)
 			videos.push(record)
+		}
 
 	}
 	console.log("sortVideo success: ", watched, videos);
@@ -489,6 +487,7 @@ async function getYoutubeData(videos) {
 			method: "GET"
 		})
 			.then(response => response.json())
+			// .then(result =>)
 			.then(result => ({
 				youtubeData: result.items[0],
 				recordData: video
@@ -504,6 +503,8 @@ async function getYoutubeData(videos) {
 			console.log("videoPromises pushed", videoListData.videos.length, videoListData.watched.length)
 			console.log("videoListData", videoListData)
 			if (videoListData.watched.length === watchedList.length) {
+				videoListData.watched.sort((a,b) => b.recordData.fields.lastModified - a.recordData.fields.lastModified)
+				videoListData.videos.sort((a,b) => b.recordData.fields.lastModified - a.recordData.fields.lastModified)
 				console.log(1)
 				main(videoListData)
 			}
@@ -515,6 +516,8 @@ async function getYoutubeData(videos) {
 			console.log("watchedPromises pushed", videoListData.videos.length, videoListData.watched.length)
 			console.log("videoListData", videoListData)
 			if (videoListData.videos.length === videoList.length) {
+				videoListData.videos.sort((a,b) => b.recordData.fields.lastModified - a.recordData.fields.lastModified)
+				videoListData.watched.sort((a,b) => b.recordData.fields.lastModified - a.recordData.fields.lastModified)
 				console.log(2)
 				main(videoListData)
 			}
@@ -527,8 +530,7 @@ async function getYoutubeData(videos) {
 
 
 
-
-
 /***  CODE EXECUTES FROM HERE  ***/
+// getData() --> sortVideo() --> getYoutubeData() --> main() --> displayHome() --> myFunc() --> display1() --> getViews(), getTime(), getDuration()
 
 getData(username, group)
