@@ -47,7 +47,7 @@ function displayHome(videoListData){
 			thumbnailHome.className = "thumbnailHome";
 			thumbnailHome.setAttribute("data-duration", getDuration(currentVideo.youtubeData.contentDetails.duration));
 			let thumbnailImgHome = document.createElement('img');
-			thumbnailImgHome.src = currentVideo.youtubeData.snippet.thumbnails.default.url;
+			thumbnailImgHome.src = currentVideo.youtubeData.snippet.thumbnails.standard.url;
 			thumbnailImgHome.className = "thumbnailImgHome";
 			let vidBottomSectionHome = document.createElement('div');
 			vidBottomSectionHome.className = "vidBottomSectionHome";
