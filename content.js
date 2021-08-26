@@ -21,49 +21,58 @@ function displayHome(videoListData){
 			videosHome.appendChild(videoSectionHome);
 			let child = document.getElementById('primary').childNodes[0];
 			child.insertBefore(videosHome, child.childNodes[3]);
-			display1(videoListData.videos, "v");
-			display1(videoListData.watched, "w");
+			display1(videoListData);
 		}
 
-	function display1(videoList, type){
-		// let videoList = videoListData.videos;
-		// console.log("display1 videoList ", videoList)
+	function display1(videoListData){
 
+		let toShow = [...videoListData.videos, ...videoListData.watched] 
 
+		console.log("display1 videoList ", toShow)
 		videosHome = document.getElementById("videosHome");
 		videoSectionHome = document.getElementById("videoSectionHome");
 	
-		for(let i = 0; i < videoList.length; i++){
-			// console.log("display1 ", i, videoList[i])	
-			let currentVideo = videoList[i]
+		for(let i = 0; i < 12; i++){
+			// console.log("display1 ", i, toShow[i])	
+			let currentVideo = toShow[i]
 			
 			let videoContainerHome = document.createElement('article');
 			videoContainerHome.className = "videoContainerHome";
-			let thumbnailHome = document.createElement('a');
-			thumbnailHome.href = "https://www.youtube.com/watch?v=" + currentVideo.youtubeData.id;
+			
+			let thumbnailHome = document.createElement('div');
+			thumbnailHome.id = "thumbnailHome-" + currentVideo.youtubeData.id
 			thumbnailHome.className = "thumbnailHome";
 			thumbnailHome.setAttribute("data-duration", getDuration(currentVideo.youtubeData.contentDetails.duration));
+			if (currentVideo.flag == "w") {
+				// do css for watched videos
+				thumbnailHome.setAttribute("data-duration", "WATCHED");
+			}
+			thumbnailHome.addEventListener("click", () => markWatched(currentVideo.youtubeData.id))
+			
 			let thumbnailImgHome = document.createElement('img');
-			thumbnailImgHome.src = currentVideo.youtubeData.snippet.thumbnails.standard.url;
+			thumbnailImgHome.src = currentVideo.youtubeData.snippet.thumbnails.high.url;
 			thumbnailImgHome.className = "thumbnailImgHome";
+
 			let vidBottomSectionHome = document.createElement('div');
 			vidBottomSectionHome.className = "vidBottomSectionHome";
+
 			let channelIconHome = document.createElement('a');
-			channelIconHome.href = "#";
+			channelIconHome.href = "https://www.youtube.com/channel/" + currentVideo.youtubeData.snippet.channelId;
 			let iconImgHome = document.createElement('img');
-			iconImgHome.src = "http://unsplash.it/36/36?gravity=center";
+			iconImgHome.src = currentVideo.youtubeData.channelThumbnail;
 			iconImgHome.className = "iconImgHome";
 			
 			let videoDetailsHome = document.createElement('div');
 			videoDetailsHome.className = "videoDetailsHome";
 			let videoTitleHome = document.createElement('a');
-			videoTitleHome.href = "#"
+			videoTitleHome.href = "https://www.youtube.com/watch?v=" + currentVideo.youtubeData.id;
 			videoTitleHome.className = "videoTitleHome";
 			videoTitleHome.textContent = currentVideo.youtubeData.snippet.title;
 			let channelNameHome = document.createElement('a');
-			channelNameHome.href = "#"
+			channelNameHome.href = "https://www.youtube.com/channel/" + currentVideo.youtubeData.snippet.channelId;
 			channelNameHome.className = "channelNameHome";
 			channelNameHome.textContent = currentVideo.youtubeData.snippet.channelTitle;
+			
 			let videoMetaHome = document.createElement('div');
 			videoMetaHome.className = "videoMetaHome";
 			let viewsHome = document.createElement('span');
@@ -114,9 +123,6 @@ function displayHome(videoListData){
 	
 			videoSectionHome.appendChild(videoContainerHome);
 
-			if (type == "w") {
-				videoContainerHome.style["background-color"] = "#aabbcc"
-			}
 	
 		}
 	
@@ -133,63 +139,64 @@ function displayWatch(videoListData){
 	myFunc(videoListData);
 	
 	function myFunc(videoListData) {
+		
 		if (document.getElementById('secondary-inner')) {
 			console.log("shit is happening")	
 			display(videoListData);
-		} else {
+		} else 
 			setTimeout(myFunc, 15);
-		}
-	
-		if (document.getElementById('info')){
+			
+		if (document.getElementById('info'))
 			button();
-		} else {
+		else 
 			setTimeout(myFunc, 15);
-		}
 	}
 	
+
 	
 	function display(videoListData){
+	
+	let toShow = [...videoListData.videos, ...videoListData.watched] 
+	// console.log(toShow)
 
-	let videoList = videoListData.videos;
-	console.log(videoList)
+
 	let videos = document.createElement('div');
 	videos.className = "videos";
 	let videoSection = document.createElement('div');
 	videoSection.className = "videoSection";
 
-	for(var i = 0; i < ((videoList.length < 4) ? videoList.length : 4); i++){
+	for(var i = 0; i < 4; i++){
 
-		console.log(videoList[i])
-		let currentVideo = videoList[i]
+		console.log(toShow[i])
+		let currentVideo = toShow[i]
 		let videoContainer = document.createElement('article');
 		videoContainer.className = "videoContainer";
 		let thumbnailContainer = document.createElement('div');
 		thumbnailContainer.className = "thumbnailContainer";
-		let thumbnail = document.createElement('a');
-		thumbnail.href = "#";
+		thumbnailContainer.id = "thumbnailContainer-" + currentVideo.youtubeData.id;
+
+		let thumbnail = document.createElement('div');
 		thumbnail.className = "thumbnail";
 		thumbnail.setAttribute("data-duration", getDuration(currentVideo.youtubeData.contentDetails.duration));
+		thumbnail.addEventListener("click", () => markWatched(currentVideo.youtubeData.id))
+		
 		let thumbnailImg = document.createElement('img');
-		thumbnailImg.src = currentVideo.youtubeData.snippet.thumbnails.standard.url;
+		thumbnailImg.src = currentVideo.youtubeData.snippet.thumbnails.high.url;
 		thumbnailImg.className = "thumbnailImg";
+		
 		let vidBottomSection = document.createElement('div');
 		vidBottomSection.className = "vidBottomSection";
-		// let channelIcon = document.createElement('a');
-		// channelIcon.href = "#";
-		// let iconImg = document.createElement('img');
-		// iconImg.src = "http://unsplash.it/36/36?gravity=center";
-		// iconImg.className = "iconImg";
 		let videoDetails = document.createElement('div');
 		videoDetails.className = "videoDetails";
 		let videoTitle = document.createElement('a');
 		videoTitle.href = "#"
 		videoTitle.className = "videoTitle";
 		videoTitle.textContent = currentVideo.youtubeData.snippet.title;
-		// videoTitle.textContent = list[i];
 		let channelName = document.createElement('a');
 		channelName.href = "#"
 		channelName.className = "channelName";
 		channelName.textContent = currentVideo.youtubeData.snippet.channelTitle;
+		
 		let videoMeta = document.createElement('div');
 		videoMeta.className = "videoMeta";
 		let views = document.createElement('span');
@@ -228,9 +235,6 @@ function displayWatch(videoListData){
 		videoDetails.appendChild(channelName);
 		videoDetails.appendChild(videoMeta);
 
-		// channelIcon.appendChild(iconImg);
-
-		// vidBottomSection.appendChild(channelIcon);
 		vidBottomSection.appendChild(videoDetails);
 
 		thumbnail.appendChild(thumbnailImg);
@@ -365,6 +369,12 @@ function getDuration(duration) {
 	return result
 }
 
+
+function markWatched(url) {
+	console.log("watched!")
+	window.location.href = "https://www.youtube.com/watch?v=" + url;
+}
+
 function main(videoListData){
 	
 	if (location.href == "https://www.youtube.com/"){
@@ -381,9 +391,14 @@ function main(videoListData){
 
 	else if (location.href.startsWith("https://www.youtube.com/watch")){
 		let loadedWatch = document.getElementsByClassName("videos");
-		for (let i = 0; i < loadedWatch.length; i++){
+		let loadedButton = document.getElementsByClassName("buttonContainer")
+		// loadedWatch.append(document.getElementsByClassName("buttonContainer"))
+		for (let i = 0; i < loadedWatch.length; i++)
 			loadedWatch.item(i).remove();
-		}
+
+		for (let i = 0; i < loadedButton.length; i++)
+			loadedButton.item(i).remove();
+
 		console.log("running watch page")
 		displayWatch(videoListData);
 	}
@@ -439,8 +454,6 @@ function main(videoListData){
 
 function getData(username,group) {
 
-
-
 	fetch("https://api.airtable.com/v0/app7p5QzizdfWc9z4/Group_" + group + "?api_key=key9aJ5YsRgxI007V", {
 	headers: {
 			Authorization: "Bearer key9aJ5YsRgxI007V",
@@ -478,18 +491,22 @@ function sortVideo(data, username) {
 }
 
 
-async function getYoutubeData(videos) {
+function getYoutubeData(videos) {
 	let watchedList = videos[0];
 	let videoList = videos[1];
 	const watchedPromises = [];
 	const videoPromises = [];
 
-	const videoListData = {
+	let videoMax = Math.min(videoList.length, 12)
+	let watchedMax = videoMax >= 12 ? 0 : (Math.min(watchedList.length, 12 - videoList.length))
+
+	let videoListData = {
 		watched: [],
 		videos: []
 	};
 
-	for (let video of videoList) {
+	for (let i = 0; i < videoMax; ++i) {
+		let video = videoList[i]
 		url = video.fields.video_id
 		videoPromises.push(fetch("https://www.googleapis.com/youtube/v3/videos?id=" + url + "&t&key=AIzaSyDbsWuM_ZIIISlvJoGjLoEoi2G9lFTmkxQ&part=snippet,contentDetails,statistics,status", {
 			method: "GET"
@@ -497,38 +514,40 @@ async function getYoutubeData(videos) {
 			.then(response => response.json())
 			.then(result => ({
 				youtubeData: result.items[0],
-				recordData: video
+				recordData: video,
+				flag: "v"
 			}))
 			.catch(e => console.log("error youtubeApi: " + e))
 		)
 	}
+	
 
-	for (let video of watchedList) {
+	for (let i = 0; i < watchedMax; ++i) {
+		let video = watchedList[i]
 		url = video.fields.video_id
 		watchedPromises.push(fetch("https://www.googleapis.com/youtube/v3/videos?id=" + url + "&t&key=AIzaSyDbsWuM_ZIIISlvJoGjLoEoi2G9lFTmkxQ&part=snippet,contentDetails,statistics,status", {
 			method: "GET"
 		})
 			.then(response => response.json())
-			// .then(result =>)
 			.then(result => ({
 				youtubeData: result.items[0],
-				recordData: video
+				recordData: video,
+				flag: "w"
 			}))
 			.catch(e => console.log("error youtubeApi: " + e))
 		)
 	}
 
-	
+	let called = false;
 	Promise.all(videoPromises)
 		.then((values) => {
 			videoListData.videos.push(...values)
 			console.log("videoPromises pushed", videoListData.videos.length, videoListData.watched.length)
 			console.log("videoListData", videoListData)
-			if (videoListData.watched.length === watchedList.length) {
-				videoListData.watched.sort((a,b) => b.recordData.fields.lastModified - a.recordData.fields.lastModified)
-				videoListData.videos.sort((a,b) => b.recordData.fields.lastModified - a.recordData.fields.lastModified)
+			if (videoListData.watched.length === watchedMax && !called) {
+				called = true;
 				console.log(1)
-				main(videoListData)
+				getChannelData(videoListData)
 			}
 		})
 
@@ -537,12 +556,52 @@ async function getYoutubeData(videos) {
 			videoListData.watched.push(...values)
 			console.log("watchedPromises pushed", videoListData.videos.length, videoListData.watched.length)
 			console.log("videoListData", videoListData)
-			if (videoListData.videos.length === videoList.length) {
-				videoListData.videos.sort((a,b) => b.recordData.fields.lastModified - a.recordData.fields.lastModified)
-				videoListData.watched.sort((a,b) => b.recordData.fields.lastModified - a.recordData.fields.lastModified)
+			if (videoListData.videos.length === videoMax && !called) {
+				called = true
 				console.log(2)
-				main(videoListData)
+				getChannelData(videoListData)
 			}
+		})
+}
+
+function getChannelData(videoListData) {
+	let channelPromises = []
+	let videoList = [...videoListData.videos, ... videoListData.watched]
+	console.log(videoList)
+	for (video of videoList) {
+		let data = video
+		channelPromises.push(fetch("https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=" + video.youtubeData.snippet.channelId + "&key=AIzaSyDbsWuM_ZIIISlvJoGjLoEoi2G9lFTmkxQ", {
+			method: "GET"
+		})
+			.then(response => response.json())
+			.then(result =>  ({
+				[data.youtubeData.id]: result.items[0].snippet.thumbnails.default.url
+			}))
+			.catch(e => console.log("error channel: " + e))
+		)
+	}
+
+	Promise.all(channelPromises)
+		.then(values => {
+			let result = {
+				watched: [],
+				videos: []
+			}
+			data = Object.assign({}, ...values);
+			console.log("channel ",values)
+			for (list in videoListData) {
+				for (video of videoListData[list]) {
+					video.youtubeData.channelThumbnail = data[video.youtubeData.id]
+					if (video.flag == "w") 
+						result.watched.push(video)
+					else if (video.flag == "v")
+						result.videos.push(video)
+					console.log(video)
+				}
+			}
+			result.watched.sort((a,b) => b.recordData.fields.lastModified - a.recordData.fields.lastModified)
+			result.videos.sort((a,b) => b.recordData.fields.lastModified - a.recordData.fields.lastModified)
+			main(result)	
 		})
 }
 

@@ -26,6 +26,7 @@
 .thumbnailHome {
     position: relative;
     display: flex;
+		cursor: pointer;
 }
 
 .thumbnailHome::before {
@@ -37,7 +38,7 @@
     bottom: 5px;
     padding: .1em .3em;
     border-radius: .3em;
-    font-size: 0.9rem;
+    font-size: 1rem;
 }
 
 .thumbnailImgHome {
@@ -98,8 +99,8 @@
 
 .videoSection {
     display: flex;
-    /* display:flex;
-    flex-wrap: wrap; */
+    /* display:flex;*/
+    /* flex-wrap: wrap;  */
     /* grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important; */
     flex-direction: column;
     gap: 2rem 1rem; 
@@ -119,6 +120,7 @@
 .thumbnail {
     position: relative;
     display: flex;
+		cursor: pointer;
 }
 
 .thumbnail::before {
@@ -131,6 +133,7 @@
     padding: .1em .3em;
     border-radius: .3em;
     font-size: 1.2rem;
+		font-weight: bold;
 }
 
 .thumbnailImg {
