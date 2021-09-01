@@ -1,0 +1,29 @@
+.itemContainer {
+    width: 320px;
+    margin: 0px 5px 10px 5px;
+    display: flex;
+    flex-direction: row;
+    /* background-color: darkorchid; */
+}
+
+.thumbnailContainer {
+    width: 112px;
+    height: 63px;
+}
+
+.videoDetails {
+    margin: 0px 0px 0px 10px;
+    display: flex;
+    flex-direction: column;
+    /* background-color: bisque; */
+}
+
+.videoTitle {
+    margin: 0;
+    /* background-color: burlywood; */
+}
+
+.recommenders {
+    margin: 6px 0px 0px 0px;
+    /* background-color: darkkhaki; */
+}
