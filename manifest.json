@@ -22,5 +22,13 @@
 
    "host_permissions": [
        "<all_urls>"
-   ]
+   ],
+
+   "action": {
+        "default_icon": {                
+        "32": "Star.png"      
+        },
+        "default_title": "Youtube Social",  
+        "default_popup": "popup.html"    
+    }
 }
