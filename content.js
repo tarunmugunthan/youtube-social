@@ -1,10 +1,15 @@
+var userData = {
+	username: "tarun",
+	group: "1"
+}
 
 
-function displayHome(videoListData){
+function displayHome(videoListData, userData){
 	
-	myFuncHome(videoListData);
+	console.log(userData)
+	myFuncHome(videoListData, userData);
 	
-	function myFuncHome(videoListData) {
+	function myFuncHome(videoListData, userData) {
 		let condition = document.getElementById('primary').childNodes[0];
 		if (!Boolean(condition.tagName)){
 			location.reload();
@@ -21,10 +26,10 @@ function displayHome(videoListData){
 			videosHome.appendChild(videoSectionHome);
 			let child = document.getElementById('primary').childNodes[0];
 			child.insertBefore(videosHome, child.childNodes[3]);
-			display1(videoListData);
+			display1(videoListData, userData);
 		}
 
-	function display1(videoListData){
+	function display1(videoListData, userData){
 
 		let toShow = [...videoListData.videos, ...videoListData.watched] 
 
@@ -49,7 +54,7 @@ function displayHome(videoListData){
 				// do css for watched videos
 				thumbnailHome.setAttribute("data-duration", "WATCHED");
 			}
-			thumbnailHome.addEventListener("click", () => markWatched(currentVideo.youtubeData.id))
+			thumbnailHome.addEventListener("click", () => markWatched(currentVideo.youtubeData.id, userData))
 			
 			let thumbnailImgHome = document.createElement('img');
 			thumbnailImgHome.src = currentVideo.youtubeData.snippet.thumbnails.high.url;
@@ -135,16 +140,16 @@ function displayHome(videoListData){
 }
 
 
-function displayWatch(videoListData){
+function displayWatch(videoListData, userData){
 	
 	
-	myFunc(videoListData);
+	myFunc(videoListData, userData);
 	
-	function myFunc(videoListData) {
+	function myFunc(videoListData, userData) {
 		
 		if (document.getElementById('secondary-inner')) {
 			console.log("shit is happening")	
-			display(videoListData);
+			display(videoListData, userData);
 		} else 
 			setTimeout(myFunc, 15);
 			
@@ -156,7 +161,7 @@ function displayWatch(videoListData){
 	
 
 	
-	function display(videoListData){
+	function display(videoListData, userData){
 	
 	let toShow = [...videoListData.videos, ...videoListData.watched] 
 	// console.log(toShow)
@@ -180,7 +185,7 @@ function displayWatch(videoListData){
 		let thumbnail = document.createElement('div');
 		thumbnail.className = "thumbnail";
 		thumbnail.setAttribute("data-duration", getDuration(currentVideo.youtubeData.contentDetails.duration));
-		thumbnail.addEventListener("click", () => markWatched(currentVideo.youtubeData.id))
+		thumbnail.addEventListener("click", () => markWatched(currentVideo.youtubeData.id, userData))
 		
 		let thumbnailImg = document.createElement('img');
 		thumbnailImg.src = currentVideo.youtubeData.snippet.thumbnails.high.url;
@@ -263,8 +268,9 @@ function displayWatch(videoListData){
 	}
 	
 	function button(){
-		let buttonContainer = document.createElement('button');
+		let buttonContainer = document.createElement('div');
 		buttonContainer.className = "buttonContainer";
+
 		buttonContainer.id = "recommendButton";
 		// let buttonImg = document.createElement('img');
 		// buttonImg.src = "https://img.icons8.com/material-rounded/24/000000/star--v1.png";
@@ -283,6 +289,7 @@ function displayWatch(videoListData){
 			buttonContainer.textContent = "RECOMMENDED";
 			buttonContainer.className = 'buttonContainerDisabled';
 		})
+
 	
 		// buttonContainer.appendChild(buttonImg);
 		// buttonContainer.appendChild(buttonText);
@@ -386,12 +393,60 @@ function getDuration(duration) {
 }
 
 
-function markWatched(url) {
+function markWatched(url, userData) {
+	let recordData = {}
+	fetch("https://api.airtable.com/v0/app7p5QzizdfWc9z4/Group_" + userData.group + "?api_key=key9aJ5YsRgxI007V", {
+	headers: {
+			Authorization: "Bearer key9aJ5YsRgxI007V",
+			"Content-Type": "application/json"
+		},
+	method: "GET",
+	})
+		.then(response => response.json())
+		.then(result => {
+			console.log("markw", result)
+			for (record of result.records) {
+				// console.log("markw", record)
+				if (record.fields.video_id == url) 
+					recordData = record
+			}
+			console.log("markWatched GET:", recordData)
+			if (recordData.id) {
+				if (!recordData.fields.watched_by.includes(userData.username))
+					recordData.fields.watched_by.push(userData.username)
+				delete recordData.createdTime;
+				delete recordData.fields.lastModified
+				let postData = {
+					records: [recordData]
+				}
+				console.log("to post ", postData)
+				// recordData.fields.lastModified = new Date().toISOString()
+				fetch("https://api.airtable.com/v0/app7p5QzizdfWc9z4/Group_" + userData.group + "?api_key=key9aJ5YsRgxI007V", {
+					headers: {
+						Authorization: "Bearer key9aJ5YsRgxI007V",
+						"Content-Type": "application/json"
+					},
+					method: "PUT",
+					body: JSON.stringify(postData),
+					// body: {records: [recordData]},
+				})
+					.then(response => response.json())
+					.then(result => {
+						console.log(result)
+						// window.location.href = "https://www.youtube.com/watch?v=" + url;
+					})
+					.catch(e => console.log("PUT error:", e))
+			}
+		})
+		.catch(e => console.log("GET error: ", e))
 	console.log("watched!")
-	window.location.href = "https://www.youtube.com/watch?v=" + url;
 }
 
-function main(videoListData){
+function recommend(url, username, group) {
+	
+}
+
+function main(videoListData, userData){
 	
 	if (location.href == "https://www.youtube.com/"){
 		let loadedHome = document.getElementsByClassName("videosHome");
@@ -401,7 +456,7 @@ function main(videoListData){
 			loadedHome.item(i).remove();
 
 		// console.log("running home page");
-		displayHome(videoListData);
+		displayHome(videoListData, userData);
 
 	} 
 
@@ -416,7 +471,7 @@ function main(videoListData){
 			loadedButton.item(i).remove();
 
 		console.log("running watch page")
-		displayWatch(videoListData);
+		displayWatch(videoListData, userData);
 	}
 	console.log(location.href);
 }
@@ -468,7 +523,7 @@ function main(videoListData){
 
 
 
-function getData(username,group) {
+function getData(username,group, userData) {
 
 	fetch("https://api.airtable.com/v0/app7p5QzizdfWc9z4/Group_" + group + "?api_key=key9aJ5YsRgxI007V", {
 	headers: {
@@ -478,12 +533,12 @@ function getData(username,group) {
 	method: "GET"
 	})
 	.then(response => response.json())
-	.then(data => sortVideo(data, username))
+	.then(data => sortVideo(data, username, userData))
 	.catch(e => console.log("getData error: ", e))
 }
 
 
-function sortVideo(data, username) {
+function sortVideo(data, username, userData) {
 	let watched = [];
 	let videos = [];
 
@@ -503,11 +558,11 @@ function sortVideo(data, username) {
 
 	}
 	console.log("sortVideo success: ", watched, videos);
-	getYoutubeData([watched, videos]);
+	getYoutubeData([watched, videos], userData);
 }
 
 
-function getYoutubeData(videos) {
+function getYoutubeData(videos, userData) {
 	let watchedList = videos[0];
 	let videoList = videos[1];
 	const watchedPromises = [];
@@ -563,7 +618,7 @@ function getYoutubeData(videos) {
 			if (videoListData.watched.length === watchedMax && !called) {
 				called = true;
 				console.log(1)
-				getChannelData(videoListData)
+				getChannelData(videoListData, userData)
 			}
 		})
 
@@ -575,12 +630,12 @@ function getYoutubeData(videos) {
 			if (videoListData.videos.length === videoMax && !called) {
 				called = true
 				console.log(2)
-				getChannelData(videoListData)
+				getChannelData(videoListData, userData)
 			}
 		})
 }
 
-function getChannelData(videoListData) {
+function getChannelData(videoListData, userData) {
 	let channelPromises = []
 	let videoList = [...videoListData.videos, ... videoListData.watched]
 	console.log(videoList)
@@ -604,7 +659,7 @@ function getChannelData(videoListData) {
 				videos: []
 			}
 			data = Object.assign({}, ...values);
-			console.log("channel ",values)
+			// console.log("channel ",values)
 			for (list in videoListData) {
 				for (video of videoListData[list]) {
 					video.youtubeData.channelThumbnail = data[video.youtubeData.id]
@@ -612,12 +667,12 @@ function getChannelData(videoListData) {
 						result.watched.push(video)
 					else if (video.flag == "v")
 						result.videos.push(video)
-					console.log(video)
+					// console.log(video)
 				}
 			}
 			result.watched.sort((a,b) => b.recordData.fields.lastModified - a.recordData.fields.lastModified)
 			result.videos.sort((a,b) => b.recordData.fields.lastModified - a.recordData.fields.lastModified)
-			main(result)	
+			main(result, userData)	
 		})
 }
 
@@ -631,7 +686,12 @@ function getChannelData(videoListData) {
 function start() {
 	let username = "tarun";
 	let group = "1";
-	getData(username,group)
+
+	var userData = {
+		username: username,
+		group: group
+	}
+	getData(username,group,userData)
 }
 
 start()
