@@ -13,7 +13,7 @@ function displayHome(videoListData, userData){
 		let condition = document.getElementById('primary').childNodes[0];
 		if (!Boolean(condition.tagName)){
 			location.reload();
-			setTimeout(myFuncHome, 1000);
+			setTimeout(myFuncHome, 500);
 			console.log("tagname not found")
 		} else {
 			console.log("shit is happening at home", !Boolean(condition.tagName));
@@ -36,6 +36,8 @@ function displayHome(videoListData, userData){
 		console.log("display1 videoList ", toShow)
 		videosHome = document.getElementById("videosHome");
 		videoSectionHome = document.getElementById("videoSectionHome");
+		// videoSectionHome.style.display = "grid";
+		// videoSectionHome.style.gridTemplateColumns = "repeat(auto-fit, minmax(250px, 1fr))";
 	
 		for(let i = 0; i < 12; i++){
 			// console.log("display1 ", i, toShow[i])	
@@ -268,19 +270,35 @@ function displayWatch(videoListData, userData){
 	function button(){
 		let buttonContainer = document.createElement('div');
 		buttonContainer.className = "buttonContainer";
-		let buttonImg = document.createElement('img');
-		buttonImg.src = "https://img.icons8.com/material-rounded/24/000000/star--v1.png";
-		let buttonText = document.createElement('button');
-		buttonText.className = "buttonText";
-		buttonText.textContent = "RECOMMEND";
+
+		buttonContainer.id = "recommendButton";
+		// let buttonImg = document.createElement('img');
+		// buttonImg.src = "https://img.icons8.com/material-rounded/24/000000/star--v1.png";
+		// let buttonText = document.createElement('div');
+		// buttonText.className = "buttonText";
+		let buttonLabel = document.createTextNode('RECOMMEND');
+		buttonLabel.className = "buttonText"
+		let buttonStarContainer = document.createElement('div');
+		buttonStarContainer.className = "buttonStar"
+		let buttonStar = document.createTextNode(' ☆');
+		buttonStarContainer.appendChild(buttonStar);
+		buttonContainer.appendChild(buttonLabel);
+		buttonContainer.appendChild(buttonStarContainer);
+
+		buttonContainer.addEventListener("click", function(){
+			buttonContainer.textContent = "RECOMMENDED";
+			buttonContainer.className = 'buttonContainerDisabled';
+		})
+
 	
-		buttonContainer.appendChild(buttonImg);
-		buttonContainer.appendChild(buttonText);
+		// buttonContainer.appendChild(buttonImg);
+		// buttonContainer.appendChild(buttonText);
 	
-		let pos = document.getElementById('info');
+		let pos = document.getElementById('menu-container');
+		pos.style.paddingRight = "120px";
+		// pos.style.backgroundColor = "red";
 		pos.insertBefore(buttonContainer, pos.childNodes[0]);
 	}
-	
 	
 }
 
@@ -659,11 +677,6 @@ function getChannelData(videoListData, userData) {
 }
 
 
-
-
-
-
-
 /***  CODE EXECUTES FROM HERE  ***/
 // getData() --> sortVideo() --> getYoutubeData() --> main() --> displayHome() --> myFunc() --> display1() --> getViews(), getTime(), getDuration()
 
@@ -682,3 +695,6 @@ function start() {
 }
 
 start()
+
+
+

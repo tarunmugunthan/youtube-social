@@ -1,24 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
 
-
-
+.videosHome {
+    width: 100%;
+}
 
 .videoSectionHome {
-    /* display: grid; */
-    display:flex;
-    flex-wrap: wrap;
-    /* grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important; */
-    gap: 3rem 1rem; 
-    padding: 3rem 0;
-    margin: 0 1.5rem;
+    /* --n:5; */
+    display: grid;
+    /* display:flex;
+    flex-wrap: wrap; */
+    grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+    row-gap: 18px;
+    column-gap: 16px;
+    margin: 20px 24px;
     border-bottom: 4px solid #CCC;
-
-    /* background-color: burlywood; */
 }
 
 .videoContainerHome {
     display: flex;
     flex-direction: column;
-		max-width: 280px;
+
+    
+
+
     /* background-color: cadetblue; */
 		/* padding: 2rem; */
 }
@@ -26,7 +30,10 @@
 .thumbnailHome {
     position: relative;
     display: flex;
-		cursor: pointer;
+    cursor: pointer;
+    width: 100%;
+    height: 56.25%;
+    background-color: aqua;
 }
 
 .thumbnailHome::before {
@@ -38,14 +45,15 @@
     bottom: 5px;
     padding: .1em .3em;
     border-radius: .3em;
-    font-size: 1rem;
+    font-size: 1.2rem;
+    font-weight: 500;
 }
 
 .thumbnailImgHome {
     width: 100%;
-    height: 100%;
-    min-width: 280px;
-    min-height: 150px;
+    object-fit: cover;
+    /* min-width: 280px;
+    min-height: 150px; */
     background-color: #AAA;
 }
 
@@ -69,29 +77,37 @@
 }
 
 .videoTitleHome {
-    font-size: 1.1rem;
-    font-weight: bold;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    font-weight: 500;
     margin-bottom: 0.5rem;
     text-decoration: none;
     color: black;
 }
 
 .channelNameHome {
+    font-size: 1.4rem;
     margin-bottom: 0.1rem;
     text-decoration: none;
-    color: #555;
+    color: rgb(102, 102, 102);
     transition: color 150ms;
 }
 
 .channelNameHome:hover {
+    font-size: 1.4rem;
     color: #111;
 }
 
 .videoMetaHome {
+    font-size: 1.4rem;
+    line-height: 1.7rem;
     color: #555;
 }
 
-.recommenderHome {
+.reccommenderHome {
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: rgb(223, 55, 55);
     padding-top: 4px;
 }
 
@@ -194,34 +210,54 @@
 
 .recommender {
     padding-top: 4px;
+    color: #CF0011;
+    font-weight: 500;
+    font-size: 13px;
 }
 
 .buttonContainer {
-    width: 120px;
+    /* width: 30px; */
     display: flex;
     flex-direction: row;
     float: right;
-    margin-top: 10px;
-    position: relative;
+    padding-top: 6px;
+    padding-bottom: 3px;
+    margin: 7px -120px 5px 5px;
+    border: none;
+    background: none;
+    font-size: 11pt;
+    font-weight: 500;
+    font-family: 'Roboto', sans-serif;
+    color: rgb(0, 0, 0);
 }
 
-.buttonImg {
+.buttonContainer:hover {
+    color: #CF0011;
+}
+
+/* .buttonImg {
     width: 20px;
     height: 20px;
     position: absolute;
+    margin-top: -30px;
     top: 50%;
     transform: translateY(-50%);
-}
+} */
 
 .buttonText {
-    color: grey;
+    color: rgb(0, 0, 0);
     font-size: 11pt;
-    font-weight: 500;
-    position: absolute;
+    font-weight: 700;
+    font-family: 'Roboto', sans-serif;
+    /* position: absolute;
     top: 50%;
-    transform: translateY(-50%);
-    margin-left: 30px;
-    margin-top: 1px;
+    transform: translateY(-50%); */
+    margin: 10px 20px 0px 0px;
+}
+
+.buttonStar {
+    font-size: 14pt;
+    margin: -6px 0px 0px 4px;
 }
 
 /* text_style.style["fontSize"] = "36pt"
@@ -229,3 +265,19 @@ box.style["background-color"] = "#FF00FF";
 box.style["height"] = '200px'
 box.style["margin-top"] = '80px';
 box.style["margin-bottom"] = '-40px'; */
+
+.buttonContainerDisabled {
+    /* width: 30px; */
+    display: flex;
+    flex-direction: row;
+    float: right;
+    padding-top: 6px;
+    padding-bottom: 3px;
+    margin: 7px -120px 5px 5px;
+    border: none;
+    background: none;
+    font-size: 11pt;
+    font-weight: 500;
+    font-family: 'Roboto', sans-serif;
+    color: rgb(124, 124, 124);
+}
