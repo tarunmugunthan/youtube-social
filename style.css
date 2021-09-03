@@ -232,6 +232,7 @@
 }
 
 .buttonContainer:hover {
+		cursor: pointer;
     color: #CF0011;
 }
 
@@ -257,6 +258,7 @@
 
 .buttonStar {
     font-size: 14pt;
+    font-family: 'Roboto', sans-serif;
     margin: -6px 0px 0px 4px;
 }
 
@@ -268,6 +270,7 @@ box.style["margin-bottom"] = '-40px'; */
 
 .buttonContainerDisabled {
     /* width: 30px; */
+		cursor:default;
     display: flex;
     flex-direction: row;
     float: right;

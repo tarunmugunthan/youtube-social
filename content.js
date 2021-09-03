@@ -154,7 +154,7 @@ function displayWatch(videoListData, userData){
 			setTimeout(myFunc, 15);
 			
 		if (document.getElementById('info'))
-			button();
+			button(userData);
 		else 
 			setTimeout(myFunc, 15);
 	}
@@ -267,37 +267,49 @@ function displayWatch(videoListData, userData){
 	
 	}
 	
-	function button(){
-		let buttonContainer = document.createElement('div');
-		buttonContainer.className = "buttonContainer";
-
-		buttonContainer.id = "recommendButton";
-		// let buttonImg = document.createElement('img');
-		// buttonImg.src = "https://img.icons8.com/material-rounded/24/000000/star--v1.png";
-		// let buttonText = document.createElement('div');
-		// buttonText.className = "buttonText";
-		let buttonLabel = document.createTextNode('RECOMMEND');
-		buttonLabel.className = "buttonText"
-		let buttonStarContainer = document.createElement('div');
-		buttonStarContainer.className = "buttonStar"
-		let buttonStar = document.createTextNode(' ☆');
-		buttonStarContainer.appendChild(buttonStar);
-		buttonContainer.appendChild(buttonLabel);
-		buttonContainer.appendChild(buttonStarContainer);
-
-		buttonContainer.addEventListener("click", function(){
-			buttonContainer.textContent = "RECOMMENDED";
-			buttonContainer.className = 'buttonContainerDisabled';
-		})
-
+	function button(userData){
+		let currentVideo = location.href.split('=')[1]
+		let recommendFlag = false
 	
-		// buttonContainer.appendChild(buttonImg);
-		// buttonContainer.appendChild(buttonText);
+
+		fetch("https://api.airtable.com/v0/app7p5QzizdfWc9z4/Group_" + userData.group + "?api_key=key9aJ5YsRgxI007V", {
+			headers: {
+					Authorization: "Bearer key9aJ5YsRgxI007V",
+					"Content-Type": "application/json"
+				},
+			method: "GET"
+			})
+			.then(response => response.json())
+			.then(result => {
+				let buttonContainer = document.createElement('div');
+				buttonContainer.id = "recommendButton";
+				let buttonLabel = document.createTextNode("");
+				
+				for (record of result.records) {
+					if (record.fields.video_id == currentVideo) 
+						if (record.fields.recommended_by.includes(userData.username))
+							recommendFlag = true
+				}
+				buttonContainer.className = recommendFlag ? "buttonContainerDisabled" : "buttonContainer";
+				buttonContainer.textContent = recommendFlag ? "RECOMMENDED" : "RECOMMEND";
+				buttonContainer.appendChild(buttonLabel);
+				
+				let buttonStarContainer = document.createElement('div');
+				buttonStarContainer.className = "buttonStar"
+				let buttonStar = document.createTextNode(' ☆');
+
+				buttonStarContainer.appendChild(buttonStar);
+				if (!recommendFlag) buttonContainer.appendChild(buttonStarContainer);
+				
+				buttonContainer.addEventListener("click", () => recommend(location.href.split('=')[1], userData))
+				let pos = document.getElementById('menu-container');
+				pos.style.paddingRight = "120px";
+				pos.insertBefore(buttonContainer, pos.childNodes[0]);
+			
+			})
+			.catch(e => console.log("recommend button error: ",e))
 	
-		let pos = document.getElementById('menu-container');
-		pos.style.paddingRight = "120px";
-		// pos.style.backgroundColor = "red";
-		pos.insertBefore(buttonContainer, pos.childNodes[0]);
+	
 	}
 	
 }
@@ -420,7 +432,6 @@ function markWatched(url, userData) {
 					records: [recordData]
 				}
 				console.log("to post ", postData)
-				// recordData.fields.lastModified = new Date().toISOString()
 				fetch("https://api.airtable.com/v0/app7p5QzizdfWc9z4/Group_" + userData.group + "?api_key=key9aJ5YsRgxI007V", {
 					headers: {
 						Authorization: "Bearer key9aJ5YsRgxI007V",
@@ -428,12 +439,11 @@ function markWatched(url, userData) {
 					},
 					method: "PUT",
 					body: JSON.stringify(postData),
-					// body: {records: [recordData]},
 				})
 					.then(response => response.json())
 					.then(result => {
 						console.log(result)
-						// window.location.href = "https://www.youtube.com/watch?v=" + url;
+						window.location.href = "https://www.youtube.com/watch?v=" + url;
 					})
 					.catch(e => console.log("PUT error:", e))
 			}
@@ -442,9 +452,14 @@ function markWatched(url, userData) {
 	console.log("watched!")
 }
 
-function recommend(url, username, group) {
-	
+function recommend(url, userData) {
+	let recommendButton = document.getElementById("recommendButton")
+	recommendButton.textContent = "RECOMMENDED";
+	recommendButton.className = 'buttonContainerDisabled';
+
+	console.log(url)
 }
+
 
 function main(videoListData, userData){
 	
@@ -476,50 +491,6 @@ function main(videoListData, userData){
 	console.log(location.href);
 }
 
-
-// var box = document.createElement("div");
-// box.className = "ext-container"
-// var header = document.createElement("h1");
-// header.className = "ext-header"
-// var text = document.createTextNode("Shared Videos");
-
-// var videoContainer = document.createElement("div");
-// videoContainer.className = "videoContainer"
-
-
-
-
-// header.appendChild(text);
-
-// for( var i = 0; i < 12; i++){
-
-//	 var videoSection = document.createElement("div");
-//	 // var videoThumbnail = document.createElement("div");
-//	 // var videoContent = document.createElement("div");
-//	 // var videoText = document.createTextNode("Video Name");
-//	 videoSection.className = "videoSection"
-//	 // videoThumbnail.className = "videoThumbnail"
-//	 // videoContent.className = "videoContent"
-//	 // videoText.className = "videoText"
-
-//	 // videoSection.appendChild(videoThumbnail);
-//	 // // videoThumbnail.prepend('<img class = "yt-simple-endpoint inline-block style-scope ytd-thumbnail" src="tarun.png" />')
-//	 // videoSection.appendChild(videoContent);
-//	 // videoContent.appendChild(videoText);
-//	 videoContainer.appendChild(videoSection);
-
-// }
-
-
-
-// box.appendChild(header);
-// box.appendChild(videoContainer);
-
-
-// let element = document.getElementById("contents")
-// $('<h1>HAHAHA</h1>').insertBefore(element, null);
-
-//put it in the beginning of content
 
 
 
