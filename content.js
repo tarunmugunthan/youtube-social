@@ -484,15 +484,36 @@ function recommend(url, userData) {
 				})
 					.then(response => response.json())
 					.then(result => {
-						console.log(result)
-						let recommendButton = document.getElementById("recommendButton")
-						recommendButton.textContent = "RECOMMENDED";
-						recommendButton.className = 'buttonContainerDisabled';
+						console.log("PUT: ", result)
 					})
-			}
+			}	
 			else {
 				// you need to POST
+
+				let record = {
+					fields: {
+    				recommended_by: [userData.username],
+    				watched_by: [userData.username],
+    				video_id: url,
+				}}
+				let postData = { records: [record] }
+				fetch("https://api.airtable.com/v0/app7p5QzizdfWc9z4/Group_" + userData.group + "?api_key=key9aJ5YsRgxI007V", {
+					headers: {
+							Authorization: "Bearer key9aJ5YsRgxI007V",
+							"Content-Type": "application/json"
+						},
+					method: "POST",
+					body: JSON.stringify(postData),
+				})
+					.then(response => response.json())
+					.then(result => {
+						console.log("POST: ", result)
+					})
 			}
+
+			let recommendButton = document.getElementById("recommendButton")
+			recommendButton.textContent = "RECOMMENDED";
+			recommendButton.className = 'buttonContainerDisabled';
 		})
 		.catch(e => console.log("recommend post error: ", e))
 
@@ -518,24 +539,31 @@ function main(videoListData, userData){
 		// let loadedButton = document.getElementsByClassName("buttonContainer")
 		// let loadedButtonDisabled = document.getElementsByClassName("buttonContainerDisabled")
 		// loadedWatch.append(document.getElementsByClassName("buttonContainer"))
+		
 		for (let i = 0; i < loadedWatch.length; i++)
 			loadedWatch.item(i).remove();
+		
+		// for (let i = 0; i < loadedButton.length; i++)
+		// 	loadedButton.item(i).remove();
+		
+		// for (let i = 0; i < loadedButtonDisabled.length; i++)
+		// 	loadedButtonDisabled.item(i).remove();
+		
+		
 
+
+		// if (loadedButton) loadedButton.remove()
+
+
+
+		// console.log("running watch page")
 
 		let loadedButton = document.getElementById("recommendButton")
 		while (loadedButton) {
 			loadedButton.remove()
 			loadedButton = document.getElementById("recommendButton")
 		}
-		// if (loadedButton) loadedButton.remove()
 
-		// for (let i = 0; i < loadedButton.length; i++)
-		// 	loadedButton.item(i).remove();
-
-		// for (let i = 0; i < loadedButtonDisabled.length; i++)
-		// 	loadedButtonDisabled.item(i).remove();
-
-		// console.log("running watch page")
 		displayWatch(videoListData, userData);
 	}
 	console.log(location.href);
