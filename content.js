@@ -174,7 +174,7 @@ function displayWatch(videoListData, userData){
 
 	for(var i = 0; i < 4; i++){
 
-		console.log(toShow[i])
+		// console.log(toShow[i])
 		let currentVideo = toShow[i]
 		let videoContainer = document.createElement('article');
 		videoContainer.className = "videoContainer";
@@ -268,7 +268,7 @@ function displayWatch(videoListData, userData){
 	}
 	
 	function button(userData){
-		let currentVideo = location.href.split('=')[1]
+		let currentVideo = location.href.split('=')[1].split('&')[0]
 		let recommendFlag = false
 	
 
@@ -281,6 +281,14 @@ function displayWatch(videoListData, userData){
 			})
 			.then(response => response.json())
 			.then(result => {
+
+				let loadedButton = document.getElementById('recommendButton');
+				console.log(loadedButton);
+				console.log(loadedButton == true);
+				if(loadedButton != null){
+					loadedButton.remove();
+				}
+
 				let buttonContainer = document.createElement('div');
 				buttonContainer.id = "recommendButton";
 				let buttonLabel = document.createTextNode("");
@@ -540,29 +548,14 @@ function main(videoListData, userData){
 		// let loadedButtonDisabled = document.getElementsByClassName("buttonContainerDisabled")
 		// loadedWatch.append(document.getElementsByClassName("buttonContainer"))
 		
-		for (let i = 0; i < loadedWatch.length; i++)
+		for (let i = 0; i < loadedWatch.length; i++){
 			loadedWatch.item(i).remove();
-		
-		// for (let i = 0; i < loadedButton.length; i++)
-		// 	loadedButton.item(i).remove();
-		
-		// for (let i = 0; i < loadedButtonDisabled.length; i++)
-		// 	loadedButtonDisabled.item(i).remove();
-		
-		
-
-
-		// if (loadedButton) loadedButton.remove()
-
-
-
-		// console.log("running watch page")
-
-		let loadedButton = document.getElementById("recommendButton")
-		while (loadedButton) {
-			loadedButton.remove()
-			loadedButton = document.getElementById("recommendButton")
 		}
+
+		
+		
+		
+		
 
 		displayWatch(videoListData, userData);
 	}
