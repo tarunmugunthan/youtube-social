@@ -299,9 +299,10 @@ function displayWatch(videoListData, userData){
 				let buttonStar = document.createTextNode(' ☆');
 
 				buttonStarContainer.appendChild(buttonStar);
-				if (!recommendFlag) buttonContainer.appendChild(buttonStarContainer);
-				
-				buttonContainer.addEventListener("click", () => recommend(location.href.split('=')[1], userData))
+				if (!recommendFlag) {
+					buttonContainer.appendChild(buttonStarContainer);
+					buttonContainer.addEventListener("click", () => recommend(currentVideo, userData))
+				} 
 				let pos = document.getElementById('menu-container');
 				pos.style.paddingRight = "120px";
 				pos.insertBefore(buttonContainer, pos.childNodes[0]);
@@ -418,7 +419,6 @@ function markWatched(url, userData) {
 		.then(result => {
 			console.log("markw", result)
 			for (record of result.records) {
-				// console.log("markw", record)
 				if (record.fields.video_id == url) 
 					recordData = record
 			}
@@ -431,7 +431,7 @@ function markWatched(url, userData) {
 				let postData = {
 					records: [recordData]
 				}
-				console.log("to post ", postData)
+				console.log("to put ", postData)
 				fetch("https://api.airtable.com/v0/app7p5QzizdfWc9z4/Group_" + userData.group + "?api_key=key9aJ5YsRgxI007V", {
 					headers: {
 						Authorization: "Bearer key9aJ5YsRgxI007V",
@@ -453,9 +453,48 @@ function markWatched(url, userData) {
 }
 
 function recommend(url, userData) {
-	let recommendButton = document.getElementById("recommendButton")
-	recommendButton.textContent = "RECOMMENDED";
-	recommendButton.className = 'buttonContainerDisabled';
+	
+	fetch("https://api.airtable.com/v0/app7p5QzizdfWc9z4/Group_" + userData.group + "?api_key=key9aJ5YsRgxI007V", {
+		headers: {
+				Authorization: "Bearer key9aJ5YsRgxI007V",
+				"Content-Type": "application/json"
+			},
+		method: "GET",
+	})
+		.then(response => response.json())
+		.then(result => {
+			let record
+			record = result.records.find(record => record.fields.video_id === url)
+			console.log(record)
+			if (record !== undefined) {
+				// that means it exists and you need to PUT
+
+				record.fields.recommended_by.push(userData.username)
+				delete record.createdTime;
+				delete record.fields.lastModified
+				let postData = { records: [record] }
+
+				fetch("https://api.airtable.com/v0/app7p5QzizdfWc9z4/Group_" + userData.group + "?api_key=key9aJ5YsRgxI007V", {
+					headers: {
+							Authorization: "Bearer key9aJ5YsRgxI007V",
+							"Content-Type": "application/json"
+						},
+					method: "PUT",
+					body: JSON.stringify(postData),
+				})
+					.then(response => response.json())
+					.then(result => {
+						console.log(result)
+						let recommendButton = document.getElementById("recommendButton")
+						recommendButton.textContent = "RECOMMENDED";
+						recommendButton.className = 'buttonContainerDisabled';
+					})
+			}
+			else {
+				// you need to POST
+			}
+		})
+		.catch(e => console.log("recommend post error: ", e))
 
 	console.log(url)
 }
@@ -465,7 +504,6 @@ function main(videoListData, userData){
 	
 	if (location.href == "https://www.youtube.com/"){
 		let loadedHome = document.getElementsByClassName("videosHome");
-		console.log(loadedHome.length)
 
 		for(let i = 0; i < loadedHome.length; i++)
 			loadedHome.item(i).remove();
@@ -477,15 +515,27 @@ function main(videoListData, userData){
 
 	else if (location.href.startsWith("https://www.youtube.com/watch")){
 		let loadedWatch = document.getElementsByClassName("videos");
-		let loadedButton = document.getElementsByClassName("buttonContainer")
+		// let loadedButton = document.getElementsByClassName("buttonContainer")
+		// let loadedButtonDisabled = document.getElementsByClassName("buttonContainerDisabled")
 		// loadedWatch.append(document.getElementsByClassName("buttonContainer"))
 		for (let i = 0; i < loadedWatch.length; i++)
 			loadedWatch.item(i).remove();
 
-		for (let i = 0; i < loadedButton.length; i++)
-			loadedButton.item(i).remove();
 
-		console.log("running watch page")
+		let loadedButton = document.getElementById("recommendButton")
+		while (loadedButton) {
+			loadedButton.remove()
+			loadedButton = document.getElementById("recommendButton")
+		}
+		// if (loadedButton) loadedButton.remove()
+
+		// for (let i = 0; i < loadedButton.length; i++)
+		// 	loadedButton.item(i).remove();
+
+		// for (let i = 0; i < loadedButtonDisabled.length; i++)
+		// 	loadedButtonDisabled.item(i).remove();
+
+		// console.log("running watch page")
 		displayWatch(videoListData, userData);
 	}
 	console.log(location.href);
@@ -508,17 +558,17 @@ function getData(username,group, userData) {
 	.catch(e => console.log("getData error: ", e))
 }
 
-
 function sortVideo(data, username, userData) {
 	let watched = [];
 	let videos = [];
 
 	records = data.records;
 	for (let record of records) {
+		record.fields.lastModified = Date.parse(record.fields.lastModified)
 		if (record.fields.recommended_by.includes(username)); 
 				// do nothing
+		
 		else if (record.fields.watched_by.includes(username))	{
-			record.fields.lastModified = Date.parse(record.fields.lastModified)
 			watched.push(record)
 		}
 
@@ -531,7 +581,6 @@ function sortVideo(data, username, userData) {
 	console.log("sortVideo success: ", watched, videos);
 	getYoutubeData([watched, videos], userData);
 }
-
 
 function getYoutubeData(videos, userData) {
 	let watchedList = videos[0];
@@ -646,13 +695,6 @@ function getChannelData(videoListData, userData) {
 			main(result, userData)	
 		})
 }
-
-
-/***  CODE EXECUTES FROM HERE  ***/
-// getData() --> sortVideo() --> getYoutubeData() --> main() --> displayHome() --> myFunc() --> display1() --> getViews(), getTime(), getDuration()
-
-// getData(username, group)
-
 
 function start() {
 	let username = "tarun";
