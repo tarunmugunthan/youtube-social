@@ -1,18 +1,32 @@
+.container {
+	width: 320px;
+}
+
+.heading {
+	padding: 0 4px;
+}
+
+
 .itemContainer {
-    width: 320px;
-    margin: 0px 5px 10px 5px;
+		cursor: pointer;
     display: flex;
     flex-direction: row;
-    /* background-color: darkorchid; */
+		margin: 8px 4px;
+		/* border:2px solid cadetblue; */
 }
 
 .thumbnailContainer {
     width: 112px;
-    height: 63px;
+    height: 64px;
+}
+
+img {
+		width: 112px;
+		height: 64px;	
 }
 
 .videoDetails {
-    margin: 0px 0px 0px 10px;
+    margin: 0 0 0 8px;
     display: flex;
     flex-direction: column;
     /* background-color: bisque; */
@@ -20,10 +34,18 @@
 
 .videoTitle {
     margin: 0;
+		font-size: larger;
+		font-weight: bold;
     /* background-color: burlywood; */
 }
 
 .recommenders {
-    margin: 6px 0px 0px 0px;
-    /* background-color: darkkhaki; */
+    margin: 4px 0 0 0;
+		color: #767676;
+}
+
+.channel {
+		margin: 6px 0 0 0;
+		color: #767676;
+		text-decoration: none;
 }
