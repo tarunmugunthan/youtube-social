@@ -3,7 +3,7 @@ start()
 
 function start() {
 	let userData = {
-		username: "tarun",
+		username: "Nim",
 		group: "1"
 	}
 	getRecommended(userData)

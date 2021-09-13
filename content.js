@@ -1,6 +1,6 @@
 
 var userData = {
-	username: "tarun",
+	username: "Nim",
 	group: "1"
 }
 
@@ -175,7 +175,7 @@ function displayWatch(videoListData, userData){
 	let videoSection = document.createElement('div');
 	videoSection.className = "videoSection";
 
-	for(var i = 0; i < 4; i++){
+	for(var i = 0; i < Math.min(toShow.length, 4); i++){
 
 		// console.log(toShow[i])
 		let currentVideo = toShow[i]
@@ -718,7 +718,7 @@ function getChannelData(videoListData, userData) {
 }
 
 function start() {
-	let username = "tarun";
+	let username = "Nim";
 	let group = "1";
 
 	var userData = {
