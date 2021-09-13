@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name":"test extension",
+    "name":"YTSocial",
     "version": "0.0.1",
-    "description":"I'm learning to build extensions",
+    "description":"Share YouTube Videos",
     "background":
     {
         "service_worker": "background.js", "type": "module"
@@ -26,7 +26,7 @@
 
    "action": {
         "default_icon": {                
-        "32": "Star.png"      
+            "32": "icon.png"      
         },
         "default_title": "Youtube Social",  
         "default_popup": "popup.html"    
