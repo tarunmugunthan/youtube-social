@@ -1,3 +1,4 @@
+
 var userData = {
 	username: "tarun",
 	group: "1"
@@ -39,7 +40,7 @@ function displayHome(videoListData, userData){
 		// videoSectionHome.style.display = "grid";
 		// videoSectionHome.style.gridTemplateColumns = "repeat(auto-fit, minmax(250px, 1fr))";
 	
-		for(let i = 0; i < 12; i++){
+		for(let i = 0; i < (Math.min(12, toShow.length)); i++){
 			// console.log("display1 ", i, toShow[i])	
 			let currentVideo = toShow[i]
 			
@@ -619,7 +620,7 @@ function getYoutubeData(videos, userData) {
 	for (let i = 0; i < videoMax; ++i) {
 		let video = videoList[i]
 		url = video.fields.video_id
-		videoPromises.push(fetch("https://www.googleapis.com/youtube/v3/videos?id=" + url + "&t&key=AIzaSyCRTENkYX3h8-JhPsZ5JDx3-7PBwhX1rnw&part=snippet,contentDetails,statistics,status", {
+		videoPromises.push(fetch("https://www.googleapis.com/youtube/v3/videos?id=" + url + "&t&key=" + key + "&part=snippet,contentDetails,statistics,status", {
 			method: "GET"
 		})
 			.then(response => response.json())
@@ -636,7 +637,7 @@ function getYoutubeData(videos, userData) {
 	for (let i = 0; i < watchedMax; ++i) {
 		let video = watchedList[i]
 		url = video.fields.video_id
-		watchedPromises.push(fetch("https://www.googleapis.com/youtube/v3/videos?id=" + url + "&t&key=AIzaSyDbsWuM_ZIIISlvJoGjLoEoi2G9lFTmkxQ&part=snippet,contentDetails,statistics,status", {
+		watchedPromises.push(fetch("https://www.googleapis.com/youtube/v3/videos?id=" + url + "&t&key=" + key + "&part=snippet,contentDetails,statistics,status", {
 			method: "GET"
 		})
 			.then(response => response.json())
@@ -681,7 +682,7 @@ function getChannelData(videoListData, userData) {
 	console.log(videoList)
 	for (video of videoList) {
 		let data = video
-		channelPromises.push(fetch("https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=" + video.youtubeData.snippet.channelId + "&key=AIzaSyDbsWuM_ZIIISlvJoGjLoEoi2G9lFTmkxQ", {
+		channelPromises.push(fetch("https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=" + video.youtubeData.snippet.channelId + "&key=" + key + "", {
 			method: "GET"
 		})
 			.then(response => response.json())

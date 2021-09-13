@@ -1,3 +1,4 @@
+
 start()
 
 function start() {
@@ -38,7 +39,7 @@ function getYoutube(list) {
 
 	for (let item of list) {
 		
-		fetchPromises.push(fetch("https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&id=" + item.url + "&key=AIzaSyDbsWuM_ZIIISlvJoGjLoEoi2G9lFTmkxQ", {
+		fetchPromises.push(fetch("https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&id=" + item.url + "&key=" + key, {
 			method: "GET"
 		})
 			.then(response => response.json())
@@ -68,7 +69,7 @@ function getYoutube(list) {
 
 function displayPopup(list) {
 	
-	for (let i = 0; i < 10; ++i) {
+	for (let i = 0; i < Math.min(20, list.length); ++i) {
 	// for (let video of list) {
 		video = list[i]
 		console.log(video)
