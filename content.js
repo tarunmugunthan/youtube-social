@@ -619,7 +619,7 @@ function getYoutubeData(videos, userData) {
 	for (let i = 0; i < videoMax; ++i) {
 		let video = videoList[i]
 		url = video.fields.video_id
-		videoPromises.push(fetch("https://www.googleapis.com/youtube/v3/videos?id=" + url + "&t&key=AIzaSyDbsWuM_ZIIISlvJoGjLoEoi2G9lFTmkxQ&part=snippet,contentDetails,statistics,status", {
+		videoPromises.push(fetch("https://www.googleapis.com/youtube/v3/videos?id=" + url + "&t&key=AIzaSyCRTENkYX3h8-JhPsZ5JDx3-7PBwhX1rnw&part=snippet,contentDetails,statistics,status", {
 			method: "GET"
 		})
 			.then(response => response.json())
