@@ -71,9 +71,11 @@ function displayHome(videoListData, userData){
 			
 			let videoDetailsHome = document.createElement('div');
 			videoDetailsHome.className = "videoDetailsHome";
-			let videoTitleHome = document.createElement('a');
-			videoTitleHome.href = "https://www.youtube.com/watch?v=" + currentVideo.youtubeData.id;
+			let videoTitleHome = document.createElement('p');
+			// videoTitleHome.href = "https://www.youtube.com/watch?v=" + currentVideo.youtubeData.id;
+			// videoTitleHome.href = "#";
 			videoTitleHome.className = "videoTitleHome";
+			videoTitleHome.addEventListener("click", () => { markWatched(currentVideo.youtubeData.id, userData)})
 			videoTitleHome.textContent = currentVideo.youtubeData.snippet.title;
 			let channelNameHome = document.createElement('a');
 			channelNameHome.href = "https://www.youtube.com/channel/" + currentVideo.youtubeData.snippet.channelId;
@@ -195,12 +197,13 @@ function displayWatch(videoListData, userData){
 		vidBottomSection.className = "vidBottomSection";
 		let videoDetails = document.createElement('div');
 		videoDetails.className = "videoDetails";
-		let videoTitle = document.createElement('a');
-		videoTitle.href = "#"
+		let videoTitle = document.createElement('p');
+		// videoTitle.href = "https://www.youtube.com/watch?v=" + currentVideo.youtubeData.id;
 		videoTitle.className = "videoTitle";
 		videoTitle.textContent = currentVideo.youtubeData.snippet.title;
+		videoTitle.addEventListener("click", () => markWatched(currentVideo.youtubeData.id, userData))
 		let channelName = document.createElement('a');
-		channelName.href = "#"
+		channelName.href = "https://www.youtube.com/channel/" + currentVideo.youtubeData.snippet.channelId;
 		channelName.className = "channelName";
 		channelName.textContent = currentVideo.youtubeData.snippet.channelTitle;
 		
@@ -456,6 +459,7 @@ function markWatched(url, userData) {
 					.catch(e => console.log("PUT error:", e))
 			}
 		})
+		.then(res => res)
 		.catch(e => console.log("GET error: ", e))
 	console.log("watched!")
 }
@@ -531,7 +535,7 @@ function recommend(url, userData) {
 
 function main(videoListData, userData){
 	
-	if (location.href == "https://www.youtube.com/"){
+	if (location.href == "https://www.youtube.com/" || location.href == "https://www.youtube.com/#"){
 		let loadedHome = document.getElementsByClassName("videosHome");
 
 		for(let i = 0; i < loadedHome.length; i++)
@@ -551,11 +555,6 @@ function main(videoListData, userData){
 		for (let i = 0; i < loadedWatch.length; i++){
 			loadedWatch.item(i).remove();
 		}
-
-		
-		
-		
-		
 
 		displayWatch(videoListData, userData);
 	}
