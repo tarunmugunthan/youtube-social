@@ -18,7 +18,7 @@ Using this extension requires you to get your own API keys for Youtube and Airta
 1. Log into or create a Google account, and use that to access your [developer console](https://console.developers.google.com/)
 2. Create a new project and enable the Youtube Data API v3
 3. Create your credentials and note down the API key 
-4. Plug this into your `content.js` file
+4. Plug this into your `content.js` and `popup.js` file
 
 #### Airtable API key
 
@@ -26,7 +26,7 @@ Using this extension requires you to get your own API keys for Youtube and Airta
 2. Customize the `recommended_by` and `watched_by` fields with the names of your friends
 3. To get the API key for the base you just created, go to [airtable.com/api](https://www.airtable.com/api) and select your base
 4. Note down the ID and API key for the base
-5. Plug these into your `content.js` file
+5. Plug these into your `content.js` and `popup.js` file
 
 ### 3. Send it to your friends
 
